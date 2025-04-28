@@ -1,0 +1,95 @@
+#MainWindow {
+    background-color: #F9FAFB;
+}
+
+#Sidebar {
+    background-color: #4F46E5;
+}
+
+#Date, #MonthlyBudget, #TotalExpenses, #TotalSavings, #Month, #PercentageUsed {
+    color: #6C6F73;
+}
+
+#Title, #Money, #Money2, #Money3, #ExpenseBreakdown, #RecentTransaction {
+    color: black;
+}
+
+#MonthlyBudgetsFrame, #TotalExpensesFrame, #TotalSavingsFrame, #ExpenseBreakdownFrame, #RecentTransactionFrame, #SavingGoalsFrame, #TransactionManagementFrame {
+    background-color: white;
+    border-radius: 10px;
+}
+
+#MonthlyIcon {
+    background-color: #DCFCE7;
+    border-radius: 5px;
+}
+
+#ExpensesIcon {
+    background-color: #FEE2E2;
+    border-radius: 5px;
+}
+
+#SavingsIcon{
+    background-color: #DBEAFE;
+    border-radius: 5px;
+}
+
+#Tally {
+    color: #3EB56A;
+}
+
+QProgressBar {
+    background-color: #E5E7EB;
+    border-radius: 5px;
+}
+
+QProgressBar::chunk {
+    background-color: #4F46E5;
+    border-radius: 5px;
+}
+
+#MonthSelect, #CategoriesSelect {
+    background-color: white;
+    border: 1px solid white;
+    color: #6C6F73;
+}
+
+#ViewAll, #NewGoal {
+    background-color: white;
+    color: #3B82F6;
+    border: none;
+}
+
+#AddTransaction {
+    background-color: white;
+    color: #6C6F73;
+    border-radius: 5px;
+    border: 1px solid #6C6F73;
+}
+
+#HomeButton, #TransactionButton {
+    border-radius: 10px;
+    background-color: #4F46E5;
+}
+
+
+#HomeButton::pressed, #TransactionButton::pressed {
+    background-color: #4338CA;
+}
+
+#NewTransaction {
+    color: white;
+    background-color: #4F46E5;
+    border: none;
+    border-radius: 5px;
+}
+
+#TransactionDate, #CategoriesSelect {
+    border-radius: 5px;
+    border: 1px solid #6C6F73;
+    color: #6C6F73;
+}
+
+QCalendarWidget QWidget {
+    alternate-background-color: green;
+}

@@ -5,3 +5,6 @@ class MainWindow(QMainWindow, MainWindowUI):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+
+    def show_home_page(self):
+        self.stackedWidget.setCurrentIndex(0)

@@ -1,11 +1,12 @@
-from PyQt6.QtWidgets import QApplication 
+import sys
+from PyQt6.QtWidgets import QApplication
 from views.main_window import MainWindow
 
 def main():
-    application = QApplication([])
-    application_window = MainWindow()
-    application_window.show()
-    application.exec()
+    app = QApplication(sys.argv)
+    window = MainWindow()  # Create an instance of your MainWindow
+    window.show()
+    sys.exit(app.exec())
 
 if __name__ == "__main__":
     main()

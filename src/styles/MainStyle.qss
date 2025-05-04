@@ -74,7 +74,7 @@ QProgressBar::chunk {
 }
 
 
-#HomeButton::pressed, #TransactionButton::pressed,  #SavingButton::pressed, #MonthlyBudgetsButton::pressed {
+#HomeButton::checked, #TransactionButton::checked,  #SavingButton::checked, #MonthlyBudgetsButton::checked {
     background-color: #4338CA;
 }
 

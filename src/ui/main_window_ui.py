@@ -19,6 +19,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
+
+        #################################### SIDEBAR ####################################
         self.Sidebar = QtWidgets.QFrame(parent=self.centralwidget)
         self.Sidebar.setMinimumSize(QtCore.QSize(100, 0))
         self.Sidebar.setMaximumSize(QtCore.QSize(100, 16777215))
@@ -115,6 +117,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.verticalLayout_13 = QtWidgets.QVBoxLayout()
         self.verticalLayout_13.setObjectName("verticalLayout_13")
+
+        #################################### HEADER ####################################
         self.Title = QtWidgets.QLabel(parent=self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -146,6 +150,8 @@ class Ui_MainWindow(object):
         self.Line.setFrameShape(QtWidgets.QFrame.Shape.HLine)
         self.Line.setObjectName("Line")
         self.verticalLayout.addWidget(self.Line)
+
+        #################################### STACKED WIDGET ####################################
         self.stackedWidget = QtWidgets.QStackedWidget(parent=self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -154,6 +160,8 @@ class Ui_MainWindow(object):
         self.stackedWidget.setSizePolicy(sizePolicy)
         self.stackedWidget.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
         self.stackedWidget.setObjectName("stackedWidget")
+
+        #################################### HOME PAGE ####################################
         self.HomePage = QtWidgets.QWidget()
         self.HomePage.setObjectName("HomePage")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.HomePage)
@@ -461,6 +469,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_9.addWidget(self.SavingsFrame)
         self.verticalLayout_3.addWidget(self.SavingGoalsFrame)
         self.stackedWidget.addWidget(self.HomePage)
+
+        #################################### MONTHLY BUDGET MANAGEMENT PAGE ####################################
         self.MonthlyManagementPage = QtWidgets.QWidget()
         self.MonthlyManagementPage.setObjectName("MonthlyManagementPage")
         self.verticalLayout_21 = QtWidgets.QVBoxLayout(self.MonthlyManagementPage)
@@ -602,6 +612,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_26.addWidget(self.MonthlyBudgetList)
         self.verticalLayout_21.addWidget(self.YourMonthlyBudgetsFrame)
         self.stackedWidget.addWidget(self.MonthlyManagementPage)
+
+        #################################### TRANSACTION MANAGEMENT PAGE ####################################
         self.TransactionManagementPage = QtWidgets.QWidget()
         self.TransactionManagementPage.setObjectName("TransactionManagementPage")
         self.verticalLayout_10 = QtWidgets.QVBoxLayout(self.TransactionManagementPage)
@@ -742,6 +754,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_11.addLayout(self.horizontalLayout_15)
         self.verticalLayout_10.addWidget(self.TransactionManagementFrame)
         self.stackedWidget.addWidget(self.TransactionManagementPage)
+
+        #################################### SAVINGS MANAGEMENT PAGE ####################################
         self.SavingsManagementPage = QtWidgets.QWidget()
         self.SavingsManagementPage.setObjectName("SavingsManagementPage")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.SavingsManagementPage)

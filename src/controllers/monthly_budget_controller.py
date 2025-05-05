@@ -50,6 +50,8 @@ class MonthlyBudgetController:
         
         date = self.main_window.BudgetDateEdit.date()
         month = date.month()
-        day = date.day()
         year = date.year()  
+
+        self.db.execute("INSERT INTO MonthlyBudget (amount, month, year) VALUES (%s, %s, %s)", (budget_amount_text, month, year),)
+        print("Budget added to the database.")
 

@@ -1,5 +1,5 @@
 import sys
-from PyQt6 import QtWidgets, QtCore
+from PyQt6 import QtWidgets, QtCore, QtGui
 from PyQt6.QtCore import Qt, QDate
 from PyQt6.QtWidgets import QTableWidget, QTableWidgetItem, QMessageBox, QWidget
 from src.database.db_manager import DBManager
@@ -24,8 +24,11 @@ class MonthlyBudgetController:
         table.setHorizontalHeaderLabels(headers)
         table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Stretch)
         table.horizontalHeader().setHighlightSections(False)
-
-        table.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.SingleSelection)
+        table.verticalHeader().setVisible(False)
+        table.horizontalHeader().setFixedHeight(40)
+        table.verticalHeader().setDefaultSectionSize(40)
+        table.setShowGrid(False)
+        table.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.NoSelection)
         table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
         table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         table.setAlternatingRowColors(True)
@@ -49,10 +52,26 @@ class MonthlyBudgetController:
         for row,budget in enumerate(budgets):
             table.insertRow(row)
             table.setItem(row, 0, QTableWidgetItem(f"{QDate.fromString(str(budget['Month']), 'M').toString('MMMM')} {budget['Year']}"))
-            table.setItem(row, 1, QTableWidgetItem(f"${budget['BudgetAmount']:.2f}"))
-            table.setItem(row, 2, QTableWidgetItem(f"${budget['TotalExpenses']:.2f}"))
-            table.setItem(row, 3, QTableWidgetItem(f"${budget['TotalDeposits']:.2f}"))
-            table.setItem(row, 4, QTableWidgetItem(f"${budget['Remaining']:.2f}"))
+
+            budget_amount = QTableWidgetItem(f"${budget['BudgetAmount']:.2f}")
+            budget_amount.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            budget_amount.setForeground(QtGui.QColor("#333333"))
+            table.setItem(row, 1, budget_amount)
+
+            expenses = QTableWidgetItem(f"-${budget['TotalExpenses']:.2f}")
+            expenses.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            expenses.setForeground(QtGui.QColor("#f44336"))  # Red color for expenses
+            table.setItem(row, 2, expenses)
+
+            deposits = QTableWidgetItem(f"+${budget['TotalDeposits']:.2f}")
+            deposits.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            deposits.setForeground(QtGui.QColor("#4a86e8"))  # Blue color for deposits
+            table.setItem(row, 3, deposits)
+
+            remaining = QTableWidgetItem(f"${budget['Remaining']:.2f}")
+            remaining.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            remaining.setForeground(QtGui.QColor("#4CAF50"))  # Green color for remaining
+            table.setItem(row, 4, remaining)
             
             action_buttons = BudgetActionButtons(budget['BudgetID'])
             action_buttons.delete_budget_requested.connect(self.delete_budget)
@@ -76,6 +95,7 @@ class MonthlyBudgetController:
         self.budgetmodel.add_budget(amount, month, year)
         print(f"Budget added for {month}/{year}: {amount}")
         self.load_budget_data()
+        self.main_window.BudgetInput.clear()
     
     def delete_budget(self, budget_id):
         reply = QMessageBox.question(

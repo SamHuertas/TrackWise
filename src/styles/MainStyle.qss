@@ -104,3 +104,20 @@ QCalendarWidget QWidget {
     border-radius: 5px;
     border: 1px solid #6C6F73;
 }
+QTableWidget {
+    border: 1px solid #e0e0e0;
+    background-color: white;
+    alternate-background-color: #f9f9f9;
+    gridline-color: #e0e0e0;
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+QHeaderView::section {
+        border: none;
+        font-family: Arial;
+        color: #737581;
+        font-size: 12px;
+        font-weight: bold;
+    }

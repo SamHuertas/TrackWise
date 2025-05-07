@@ -11,13 +11,9 @@ class MonthlyBudgetController:
         self.main_window = main_window
         self.db = DBManager()
         self.budgetmodel = MonthlyBudgetModel()
-        self.setup_ui_connections()
         self.setup_table()
         self.load_budget_data()
         self.setup_calendar()
-
-    def setup_ui_connections(self):
-        self.main_window.AddBudgetButton.clicked.connect(self.input_budget)
 
     def setup_table(self):
         table = self.main_window.MonthlyBudgetList
@@ -57,7 +53,9 @@ class MonthlyBudgetController:
             table.setItem(row, 2, QTableWidgetItem(f"${budget['TotalExpenses']:.2f}"))
             table.setItem(row, 3, QTableWidgetItem(f"${budget['TotalDeposits']:.2f}"))
             table.setItem(row, 4, QTableWidgetItem(f"${budget['Remaining']:.2f}"))
+            
             action_buttons = BudgetActionButtons(budget['BudgetID'])
+            action_buttons.delete_budget_requested.connect(self.delete_budget)
             table.setCellWidget(row, 5, action_buttons)
 
     def input_budget(self):
@@ -78,5 +76,23 @@ class MonthlyBudgetController:
         self.budgetmodel.add_budget(amount, month, year)
         print(f"Budget added for {month}/{year}: {amount}")
         self.load_budget_data()
+    
+    def delete_budget(self, budget_id):
+        reply = QMessageBox.question(
+            self.main_window, 
+            "Delete Budget", 
+            "Are you sure you want to delete this budget?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, 
+            QMessageBox.StandardButton.No
+        )
         
-        
+        if reply == QMessageBox.StandardButton.Yes:
+            success = self.budgetmodel.delete_budget(budget_id)
+            if not success:
+                QMessageBox.warning(
+                    self.main_window,
+                    "Cannot Delete",
+                    "This budget cannot be deleted because it has associated expenses or deposits."
+                )
+            else:
+                self.load_budget_data()

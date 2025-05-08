@@ -1,16 +1,19 @@
 import sys
 from PyQt6 import QtWidgets, QtCore, QtGui
-from PyQt6.QtCore import Qt, QDate
+from PyQt6.QtCore import Qt, QDate, pyqtSignal
 from PyQt6.QtWidgets import QTableWidget, QTableWidgetItem, QMessageBox, QWidget
 from src.database.db_manager import DBManager
 from src.models.monthly_budget_model import MonthlyBudgetModel
 from src.views.widgets.budget_action_buttons import BudgetActionButtons
 
-class MonthlyBudgetController:
-    def __init__(self, main_window):
+class MonthlyBudgetController(QWidget):
+    budget_added = pyqtSignal()  # Signal emitted when a new budget is added
+    budget_deleted = pyqtSignal()  # Signal emitted when a budget is deleted
+
+    def __init__(self, main_window, budget_model):
+        super().__init__()
         self.main_window = main_window
-        self.db = DBManager()
-        self.budgetmodel = MonthlyBudgetModel()
+        self.budgetmodel = budget_model
         self.setup_table()
         self.load_budget_data()
         self.setup_calendar()
@@ -95,7 +98,7 @@ class MonthlyBudgetController:
         self.budgetmodel.add_budget(amount, month, year)
         print(f"Budget added for {month}/{year}: {amount}")
         self.load_budget_data()
-        self.main_window.BudgetInput.clear()
+        self.budget_added.emit()
     
     def delete_budget(self, budget_id):
         reply = QMessageBox.question(
@@ -107,6 +110,7 @@ class MonthlyBudgetController:
         )
         
         if reply == QMessageBox.StandardButton.Yes:
+            print(f"Attempting to delete budget {budget_id}...")  # Debug print
             success = self.budgetmodel.delete_budget(budget_id)
             if not success:
                 QMessageBox.warning(
@@ -115,4 +119,6 @@ class MonthlyBudgetController:
                     "This budget cannot be deleted because it has associated expenses or deposits."
                 )
             else:
+                print("Budget deleted successfully")  # Debug print
                 self.load_budget_data()
+                self.budget_deleted.emit()

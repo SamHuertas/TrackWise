@@ -46,4 +46,8 @@ class ExpenseModel:
     def get_total_expenses(self, budget_id: int):
         # Get total expenses for a specific budget
         result = self.db.fetchone("SELECT SUM(Amount) as total FROM Expenses WHERE BudgetID = %s", (budget_id,))
-        return result['total'] if result and result['total'] is not None else 0 
+        return result['total'] if result and result['total'] is not None else 0
+
+    def get_all_transactions(self):
+        # Get all transactions ordered by date (most recent first)
+        return self.db.fetchall("SELECT ExpensesID, Date, Category, Description, Amount FROM Expenses ORDER BY Date DESC") 

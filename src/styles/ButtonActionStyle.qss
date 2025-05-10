@@ -1,4 +1,4 @@
-#DeleteButton, #DepositButton {
+#DeleteButton, #DepositButton, #EditButton {
     background-color: none;
     border: none;
 }

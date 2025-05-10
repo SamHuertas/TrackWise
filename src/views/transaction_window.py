@@ -59,7 +59,11 @@ class TransactionWindow(QDialog):
                 description=description,
                 date=date.toString(Qt.DateFormat.ISODate)
             )
-            print("Expense added successfully")
+            print("Expense added successfully")            
+            # Commit the transaction to make it visible to all parts of the application
+            self.main_window.budget_model.db.connection.commit()
+            
+            # Emit signal to update the dashboard
             self.expense_added.emit(budget['BudgetID'])
             self.clear_form()
             print("Form cleared")

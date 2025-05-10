@@ -2,7 +2,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 from pathlib import Path
 
 
-class Ui_Dialog(object):
+class Ui_TransactionWindow(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(444, 442)

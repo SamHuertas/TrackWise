@@ -17,8 +17,8 @@ class MonthlyBudgetModel:
 
     def get_budget_for_month(self, month: int, year: int):
         # Retrieve the budget for a specific month and year
-        result = self.db.query("SELECT * FROM MonthlyBudget WHERE month = %s AND year = %s", (month, year))
-        return result[0] if result else None
+        result = self.db.fetchone("SELECT * FROM MonthlyBudget WHERE month = %s AND year = %s", (month, year))
+        return result if result else None
     
     def delete_budget(self, budget_id: int):
         # Delete a budget entry for a specific id

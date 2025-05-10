@@ -81,3 +81,8 @@ class DashboardController:
             self.main_window.PercentageUsed.setText("0% of monthly budget")
             self.main_window.Money3.setText("₱0.00")
             self.main_window.Tally.setText("No budget set")
+        
+    def refresh_dashboard(self):
+        if self.main_window.Month.count() > 0:
+            current_budget_id = self.main_window.Month.currentData()
+            self.update_dashboard(current_budget_id)

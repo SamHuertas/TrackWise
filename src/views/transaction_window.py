@@ -2,6 +2,8 @@ from PyQt6.QtWidgets import QDialog, QMessageBox
 from PyQt6.QtCore import Qt, QDate, pyqtSignal
 from src.ui.transaction_dialog_ui import Ui_TransactionWindow
 from src.models.expense_model import ExpenseModel
+from src.controllers.transaction_management_controller import TransactionManagementController
+from src.models.monthly_budget_model import MonthlyBudgetModel
 
 class TransactionWindow(QDialog):
     expense_added = pyqtSignal(int)  # Signal to emit budget_id when expense is added
@@ -14,7 +16,9 @@ class TransactionWindow(QDialog):
         self.ui.setupUi(self)
         self.ui.DateInput.setDate(QDate.currentDate())
         self.expense_model = ExpenseModel()
+        self.budget_model = MonthlyBudgetModel()
         self.main_window = main_window  # Store reference to main window
+        self.transaction_controller = main_window.transaction_controller  # Get reference to transaction controller
         self.setup_categories()
         self.setup_connections()
         
@@ -59,14 +63,16 @@ class TransactionWindow(QDialog):
                 description=description,
                 date=date.toString(Qt.DateFormat.ISODate)
             )
-            print("Expense added successfully")            
-            # Commit the transaction to make it visible to all parts of the application
+            print("Expense added successfully")
             self.main_window.budget_model.db.connection.commit()
             
-            # Emit signal to update the dashboard
-            self.expense_added.emit(budget['BudgetID'])
+            # Emit signal to update the dashboard and refresh transaction table
             self.clear_form()
+            self.expense_added.emit(budget['BudgetID'])
             print("Form cleared")
+            
+            # Close the window and refresh transaction list
+            self.transaction_controller.load_transactions()
             
         except ValueError:
             QMessageBox.warning(self, "Invalid Input", "Amount must be a valid number")

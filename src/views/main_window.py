@@ -5,6 +5,7 @@ from src.controllers.monthly_budget_controller import MonthlyBudgetController
 from src.controllers.dashboard_controller import DashboardController
 from src.controllers.transaction_management_controller import TransactionManagementController
 from src.models.monthly_budget_model import MonthlyBudgetModel
+from src.models.expense_model import ExpenseModel
 from src.views.transaction_window import TransactionWindow
 
 class MainWindow(QMainWindow, MainWindowUI):
@@ -12,9 +13,10 @@ class MainWindow(QMainWindow, MainWindowUI):
         super().__init__()
         self.setupUi(self)
         self.budget_model = MonthlyBudgetModel()
+        self.expense_model = ExpenseModel()
         self.budget_controller = MonthlyBudgetController(self, self.budget_model)
         self.dashboard_controller = DashboardController(self, self.budget_model)
-        self.transaction_controller = TransactionManagementController(self, self.budget_model)
+        self.transaction_controller = TransactionManagementController(self, self.budget_model, self.expense_model)
         self.setup_sidebar()
         self.setup_connections()
         self.center_window()
@@ -37,9 +39,10 @@ class MainWindow(QMainWindow, MainWindowUI):
         
 
     def handle_expense_added(self, budget_id):
-    # Force immediate refresh of all components
-        self.dashboard_controller.update_dashboard(budget_id)
+        # Force immediate refresh of all components
+        self.dashboard_controller.refresh_dashboard()
         self.budget_controller.load_budget_data()
+        self.transaction_controller.load_transactions()
 
     def center_window(self):
         screen = self.screen().geometry()

@@ -7,11 +7,10 @@ from src.views.widgets.transaction_action_buttons import TransactionActionButton
 class TransactionManagementController(QWidget):
     transaction_deleted = pyqtSignal(int)  # Signal emitted when a transaction is deleted
 
-    def __init__(self, main_window, budget_model):
+    def __init__(self, main_window, budget_model, expense_model):
         super().__init__()
         self.main_window = main_window
-        self.budget_model = budget_model
-        self.expense_model = ExpenseModel()
+        self.expense_model = expense_model
         self.current_page = 1
         self.items_per_page = 10
         self.setup_table()
@@ -80,9 +79,20 @@ class TransactionManagementController(QWidget):
         return filtered_transactions
 
     def load_transactions(self):
+        print("Loading transactions...")  # Debug print
         table = self.main_window.TransactionTable
-        table.setRowCount(0)
+        table.clearContents()  # Clear the table contents
+        table.setRowCount(0)  # Reset row count
+
+        # Re-fetch transactions from the database to ensure the latest data is loaded
+        self.expense_model.db.connection.commit()  # Ensure database changes are committed
         transactions = self.expense_model.get_all_transactions()
+        print(f"Found {len(transactions)} transactions")  # Debug print
+        
+        if not transactions:
+            print("No transactions found")  # Debug print
+            return
+            
         transactions.sort(key=self.sort_by_date)
         
         # Calculate pagination
@@ -120,6 +130,7 @@ class TransactionManagementController(QWidget):
             
             # Description
             description_item = QTableWidgetItem(transaction['Description'])
+            description_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             description_item.setForeground(QtGui.QColor("#333333"))
             table.setItem(row, 2, description_item)
             
@@ -133,6 +144,9 @@ class TransactionManagementController(QWidget):
             action_buttons = TransactionActionButtons(transaction['ExpensesID'])
             action_buttons.delete_transaction_requested.connect(self.delete_transaction)
             table.setCellWidget(row, 4, action_buttons)
+        
+        # Force update of the table
+        print("Transactions loaded successfully")  # Debug print
 
     def previous_page(self):
         if self.current_page > 1:
@@ -160,6 +174,10 @@ class TransactionManagementController(QWidget):
         )
         
         if reply == QMessageBox.StandardButton.Yes:
-            self.expense_model.delete_expense(transaction_id)
-            self.load_transactions()
-            self.transaction_deleted.emit(transaction_id) 
+            # Get the transaction to find its budget ID before deleting
+            transaction = self.expense_model.get_expense(transaction_id)
+            if transaction:
+                budget_id = transaction['BudgetID']
+                self.expense_model.delete_expense(transaction_id)
+                self.load_transactions()
+                self.transaction_deleted.emit(budget_id)  # Emit the budget ID instead of transaction ID

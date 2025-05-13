@@ -58,6 +58,7 @@ class DashboardController:
             self.update_dashboard(budget_id)
 
     def update_dashboard(self, budget_id):
+        self.budget_model.db.connection.commit()
         budget_summary = self.budget_model.get_budget_summary(budget_id)
 
         if budget_summary:

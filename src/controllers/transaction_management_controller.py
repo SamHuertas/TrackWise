@@ -160,10 +160,6 @@ class TransactionManagementController(QWidget):
             self.current_page += 1
             self.load_transactions()
 
-    def handle_expense_added(self, budget_id):
-        self.load_transactions()
-        self.transaction_deleted.emit(budget_id)
-
     def delete_transaction(self, transaction_id):
         reply = QMessageBox.question(
             self.main_window,
@@ -179,5 +175,17 @@ class TransactionManagementController(QWidget):
             if transaction:
                 budget_id = transaction['BudgetID']
                 self.expense_model.delete_expense(transaction_id)
+                self.expense_model.db.connection.commit()  # Ensure changes are committed
+                
+                # Refresh all components
                 self.load_transactions()
-                self.transaction_deleted.emit(budget_id)  # Emit the budget ID instead of transaction ID
+                self.main_window.dashboard_controller.refresh_dashboard()
+                self.main_window.budget_controller.load_budget_data()
+                
+                # Emit signal for any other components that need to know
+                self.transaction_deleted.emit(budget_id)
+            
+
+            
+            
+

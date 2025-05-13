@@ -31,6 +31,7 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.budget_controller.budget_deleted.connect(self.dashboard_controller.setup_month_combobox)
         self.NewTransaction.clicked.connect(self.open_transaction_window)
         self.AddTransaction.clicked.connect(self.open_transaction_window)
+        self.ViewAll.clicked.connect(self.sidebar_manager.show_transactions_page)
         self.transaction_controller.transaction_deleted.connect(self.handle_transaction_deleted)
 
     def open_transaction_window(self):

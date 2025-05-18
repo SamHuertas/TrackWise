@@ -16,7 +16,7 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.expense_model = ExpenseModel()
         self.budget_controller = MonthlyBudgetController(self, self.budget_model)
         self.dashboard_controller = DashboardController(self, self.budget_model)
-        self.transaction_controller = TransactionManagementController(self, self.budget_model, self.expense_model)
+        self.transaction_controller = TransactionManagementController(self, self.expense_model)
         self.setup_sidebar()
         self.setup_connections()
         self.center_window()
@@ -33,6 +33,9 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.AddTransaction.clicked.connect(self.open_transaction_window)
         self.ViewAll.clicked.connect(self.sidebar_manager.show_transactions_page)
         self.transaction_controller.transaction_deleted.connect(self.handle_transaction_deleted)
+        self.PrevPage.clicked.connect(self.transaction_controller.previous_page)
+        self.NextPage.clicked.connect(self.transaction_controller.next_page)
+        self.CategoriesSelect.currentTextChanged.connect(self.on_category_changed)
 
     def open_transaction_window(self):
         self.transaction_window = TransactionWindow(self)
@@ -50,6 +53,10 @@ class MainWindow(QMainWindow, MainWindowUI):
         # Force immediate refresh of all components
         self.dashboard_controller.refresh_dashboard()
         self.budget_controller.load_budget_data()
+        self.transaction_controller.load_transactions()
+
+    def on_category_changed(self, category):
+        self.transaction_controller.current_page = 1  # Reset to first page when filter changes
         self.transaction_controller.load_transactions()
 
     def center_window(self):

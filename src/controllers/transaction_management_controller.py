@@ -1,18 +1,19 @@
 from PyQt6 import QtWidgets, QtCore, QtGui
 from PyQt6.QtCore import Qt, QDate, pyqtSignal
 from PyQt6.QtWidgets import QWidget, QTableWidgetItem, QMessageBox
-from src.models.expense_model import ExpenseModel
 from src.views.widgets.transaction_action_buttons import TransactionActionButtons
+import math
 
 class TransactionManagementController(QWidget):
     transaction_deleted = pyqtSignal(int)  # Signal emitted when a transaction is deleted
 
-    def __init__(self, main_window, budget_model, expense_model):
+    def __init__(self, main_window, expense_model):
         super().__init__()
         self.main_window = main_window
         self.expense_model = expense_model
         self.current_page = 1
         self.items_per_page = 10
+        self.main_window.TransactionDate.setDate(QDate.currentDate())
         self.setup_table()
         self.setup_categories()
         self.load_transactions()
@@ -60,22 +61,20 @@ class TransactionManagementController(QWidget):
         year, month, day = map(int, date_str.split('-'))
         return (year, month, day)
 
-    def filter_transactions(self, transactions):
+    def filter_by_category(self, transactions):
         # Get filter parameters
-        filter_date = self.main_window.TransactionDate.date()
         category = self.main_window.CategoriesSelect.currentText()
-        search_text = self.main_window.SearchTransac.text().lower()
         
+        # If no category is selected, default to "All Categories"
+        if not category:
+            category = "All Categories"
+
         # Apply filters
         filtered_transactions = []
         for transaction in transactions:
-            transaction_date = QDate.fromString(str(transaction['Date']), Qt.DateFormat.ISODate)
-            if (category == "All Categories" or transaction['Category'] == category) and \
-               (not search_text or search_text in transaction['Description'].lower()):
+            if category == "All Categories" or category == transaction['Category']:
                 filtered_transactions.append(transaction)
         
-        # Sort transactions by date (most recent first)
-        filtered_transactions.sort(key=self.sort_by_date, reverse=True)
         return filtered_transactions
 
     def load_transactions(self):
@@ -92,12 +91,13 @@ class TransactionManagementController(QWidget):
         if not transactions:
             print("No transactions found")  # Debug print
             return
-            
-        transactions.sort(key=self.sort_by_date)
         
-        # Calculate pagination
-        total_items = len(transactions)
-        total_pages = (total_items + self.items_per_page - 1) // self.items_per_page
+        filtered_transactions = self.filter_by_category(transactions)
+        filtered_transactions.sort(key=self.sort_by_date)
+        
+        # Calculate pagination using filtered transactions
+        total_items = len(filtered_transactions)
+        total_pages = math.ceil(total_items / self.items_per_page)
         start_idx = (self.current_page - 1) * self.items_per_page
         end_idx = min(start_idx + self.items_per_page, total_items)
         
@@ -110,7 +110,7 @@ class TransactionManagementController(QWidget):
         self.main_window.NextPage.setEnabled(self.current_page < total_pages)
         
         # Display transactions for current page
-        for row, transaction in enumerate(transactions[start_idx:end_idx]):
+        for row, transaction in enumerate(filtered_transactions[start_idx:end_idx]):
             table.insertRow(row)
             
             # Date
@@ -145,7 +145,6 @@ class TransactionManagementController(QWidget):
             action_buttons.delete_transaction_requested.connect(self.delete_transaction)
             table.setCellWidget(row, 4, action_buttons)
         
-        # Force update of the table
         print("Transactions loaded successfully")  # Debug print
 
     def previous_page(self):
@@ -155,7 +154,7 @@ class TransactionManagementController(QWidget):
 
     def next_page(self):
         total_items = len(self.expense_model.get_all_transactions())
-        total_pages = (total_items + self.items_per_page - 1) // self.items_per_page
+        total_pages = math.ceil(total_items / self.items_per_page)
         if self.current_page < total_pages:
             self.current_page += 1
             self.load_transactions()
@@ -184,7 +183,8 @@ class TransactionManagementController(QWidget):
                 
                 # Emit signal for any other components that need to know
                 self.transaction_deleted.emit(budget_id)
-            
+
+
 
             
             

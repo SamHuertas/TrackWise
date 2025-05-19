@@ -36,12 +36,12 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.PrevPage.clicked.connect(self.transaction_controller.previous_page)
         self.NextPage.clicked.connect(self.transaction_controller.next_page)
         self.CategoriesSelect.currentTextChanged.connect(self.on_category_changed)
+        self.TransactionDate.dateChanged.connect(self.transaction_controller.on_date_changed)
 
     def open_transaction_window(self):
         self.transaction_window = TransactionWindow(self)
         self.transaction_window.expense_added.connect(self.handle_expense_added)
         self.transaction_window.show()
-        
 
     def handle_transaction_deleted(self, budget_id):
         # Force immediate refresh of all components

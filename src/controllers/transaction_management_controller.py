@@ -13,7 +13,10 @@ class TransactionManagementController(QWidget):
         self.expense_model = expense_model
         self.current_page = 1
         self.items_per_page = 10
-        self.main_window.TransactionDate.setDate(QDate.currentDate())
+        self.main_window.TransactionDate.setMinimumDate(QDate(2025, 1, 1))
+        self.main_window.TransactionDate.setSpecialValueText("Select a Date")
+        self.main_window.TransactionDate.setDate(self.main_window.TransactionDate.minimumDate())
+        self.main_window.TransactionDate.dateChanged.connect(self.on_date_changed)
         self.setup_table()
         self.setup_categories()
         self.load_transactions()
@@ -77,6 +80,24 @@ class TransactionManagementController(QWidget):
         
         return filtered_transactions
 
+    def filter_by_date(self, transactions):
+        selected_date = self.main_window.TransactionDate.date()
+        # If date is minimum date (placeholder), show all transactions
+        if selected_date == self.main_window.TransactionDate.minimumDate():
+            return transactions
+            
+        filtered_transactions = []
+        for transaction in transactions:
+            # Convert transaction date string to QDate
+            transaction_date = QDate.fromString(str(transaction['Date']), Qt.DateFormat.ISODate)
+            # Compare year, month, and day separately to ensure exact date match
+            if (transaction_date.year() == selected_date.year() and 
+                transaction_date.month() == selected_date.month() and 
+                transaction_date.day() == selected_date.day()):
+                filtered_transactions.append(transaction)
+                
+        return filtered_transactions
+
     def load_transactions(self):
         print("Loading transactions...")  # Debug print
         table = self.main_window.TransactionTable
@@ -92,7 +113,9 @@ class TransactionManagementController(QWidget):
             print("No transactions found")  # Debug print
             return
         
-        filtered_transactions = self.filter_by_category(transactions)
+        # Apply both filters
+        filtered_transactions1 = self.filter_by_category(transactions)
+        filtered_transactions = self.filter_by_date(filtered_transactions1)
         filtered_transactions.sort(key=self.sort_by_date)
         
         # Calculate pagination using filtered transactions
@@ -183,6 +206,10 @@ class TransactionManagementController(QWidget):
                 
                 # Emit signal for any other components that need to know
                 self.transaction_deleted.emit(budget_id)
+
+    def on_date_changed(self, date):
+        self.current_page = 1  # Reset to first page when date changes
+        self.load_transactions()
 
 
 

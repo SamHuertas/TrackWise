@@ -91,6 +91,17 @@ QProgressBar::chunk {
     color: #6C6F73;
 }
 
+#FilterButton {
+    background-color: #4F46E5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+#FilterButton:hover {
+    background-color: #4338CA;
+}
+
 QCalendarWidget QWidget {
     alternate-background-color: green;
 }

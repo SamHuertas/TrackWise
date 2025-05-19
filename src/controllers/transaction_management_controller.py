@@ -211,6 +211,12 @@ class TransactionManagementController(QWidget):
         self.current_page = 1  # Reset to first page when date changes
         self.load_transactions()
 
+    def on_filter_clicked(self):
+        self.current_page = 1  # Reset to first page when filter is clicked
+        self.load_transactions()
+        self.main_window.CategoriesSelect.setCurrentIndex(-1)
+        self.main_window.TransactionDate.setDate(self.main_window.TransactionDate.minimumDate())
+
 
 
             

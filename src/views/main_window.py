@@ -37,6 +37,7 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.NextPage.clicked.connect(self.transaction_controller.next_page)
         self.CategoriesSelect.currentTextChanged.connect(self.on_category_changed)
         self.TransactionDate.dateChanged.connect(self.transaction_controller.on_date_changed)
+        self.FilterButton.clicked.connect(self.transaction_controller.on_filter_clicked)
 
     def open_transaction_window(self):
         self.transaction_window = TransactionWindow(self)

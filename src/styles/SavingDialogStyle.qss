@@ -1,0 +1,28 @@
+#Dialog {
+    background-color: white;
+}
+
+QLineEdit{
+    border-radius: 5px;
+    border: 2px solid #e6e6e7;
+    padding: 3px;
+}
+
+QPushButton {
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 10px;
+}
+
+#CancelButton{
+    border: 1px solid #cbccce;
+    background-color: white;
+}
+
+#SaveGoal {
+    border: none;
+    background-color: #4f46e5;
+    color: white;
+}

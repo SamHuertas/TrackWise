@@ -7,6 +7,7 @@ from src.controllers.transaction_management_controller import TransactionManagem
 from src.models.monthly_budget_model import MonthlyBudgetModel
 from src.models.expense_model import ExpenseModel
 from src.views.transaction_window import TransactionWindow
+from src.views.saving_window import SavingWindow
 
 class MainWindow(QMainWindow, MainWindowUI):
     def __init__(self):
@@ -31,6 +32,7 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.budget_controller.budget_deleted.connect(self.dashboard_controller.setup_month_combobox)
         self.NewTransaction.clicked.connect(self.open_transaction_window)
         self.AddTransaction.clicked.connect(self.open_transaction_window)
+        self.NewGoalButton.clicked.connect(self.open_saving_window)
         self.ViewAll.clicked.connect(self.sidebar_manager.show_transactions_page)
         self.transaction_controller.transaction_deleted.connect(self.handle_transaction_deleted)
         self.PrevPage.clicked.connect(self.transaction_controller.previous_page)
@@ -43,6 +45,10 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.transaction_window = TransactionWindow(self)
         self.transaction_window.expense_added.connect(self.handle_expense_added)
         self.transaction_window.show()
+
+    def open_saving_window(self):
+        self.saving_window = SavingWindow(self)
+        self.saving_window.show()
 
     def handle_transaction_deleted(self, budget_id):
         # Force immediate refresh of all components

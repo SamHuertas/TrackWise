@@ -2,7 +2,6 @@ from PyQt6.QtWidgets import QDialog, QMessageBox
 from PyQt6.QtCore import Qt, QDate, pyqtSignal
 from src.ui.transaction_dialog_ui import Ui_TransactionWindow
 from src.models.expense_model import ExpenseModel
-from src.controllers.transaction_management_controller import TransactionManagementController
 from src.models.monthly_budget_model import MonthlyBudgetModel
 
 class TransactionWindow(QDialog):
@@ -63,9 +62,7 @@ class TransactionWindow(QDialog):
                 description=description,
                 date=date.toString(Qt.DateFormat.ISODate)
             )
-            print("Expense added successfully")
-            self.main_window.budget_model.db.connection.commit()
-            
+            print("Expense added successfully")         
             # Emit signal to update the dashboard and refresh transaction table
             self.clear_form()
             self.expense_added.emit(budget['BudgetID'])

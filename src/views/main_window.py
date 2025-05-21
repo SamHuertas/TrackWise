@@ -8,6 +8,9 @@ from src.models.monthly_budget_model import MonthlyBudgetModel
 from src.models.expense_model import ExpenseModel
 from src.views.transaction_window import TransactionWindow
 from src.views.saving_window import SavingWindow
+from src.views.widgets.savings_card import SavingsGoalWidget
+from src.controllers.savings_controller import SavingsController
+from src.models.savings_model import SavingsModel
 
 class MainWindow(QMainWindow, MainWindowUI):
     def __init__(self):
@@ -15,12 +18,35 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.setupUi(self)
         self.budget_model = MonthlyBudgetModel()
         self.expense_model = ExpenseModel()
+        self.savings_model = SavingsModel()
         self.budget_controller = MonthlyBudgetController(self, self.budget_model)
         self.dashboard_controller = DashboardController(self, self.budget_model)
         self.transaction_controller = TransactionManagementController(self, self.expense_model)
+        self.savings_controller = SavingsController(self, self.savings_model)
         self.setup_sidebar()
         self.setup_connections()
         self.center_window()
+        
+        # Add a test savings card
+        test_account = {
+            "id": 1,
+            "name": "New Car",
+            "amount": 5000.00,
+            "target": 25000.00,
+            "progress": 20.0
+        }
+        test_account2 = {
+            "id": 1,
+            "name": "New Car",
+            "amount": 5000.00,
+            "target": 25000.00,
+            "progress": 20.0
+        }
+        savings_card = SavingsGoalWidget(test_account)
+        savings_card2 = SavingsGoalWidget(test_account2)
+        self.SavingsItems.layout().addWidget(savings_card)
+        self.SavingsItems.layout().addWidget(savings_card2)
+        self.SavingsItems.layout().addStretch()  # Keeps cards at the top
 
     def setup_sidebar(self):
         buttons = [self.HomeButton, self.MonthlyBudgetsButton, self.TransactionButton, self.SavingButton]

@@ -1,0 +1,46 @@
+QFrame {
+    border: 1.5px solid #e5e7eb;
+    border-radius: 14px;
+    background-color: white;
+    padding: 5px 5px 5px 5px;
+}
+
+#NameL, #AmountL, #TargetL {
+    border: none;
+    background: transparent;
+}
+
+#NameL {
+    color: #374151;
+}
+
+#AmountL {
+    color: #111827;
+}
+
+#TargetL {
+    color: #6B7280;
+}
+
+QProgressBar {
+    background-color: #E5E7EB;
+    border-radius: 3px;
+}
+
+QProgressBar::chunk {
+    background-color: #4F46E5;
+    border-radius: 3px;
+}
+
+#DeleteB, #EditB {
+    background-color: #f3f4f6;
+    border-radius: 6px;
+    font-size: 18px;
+}
+
+#DepositB {
+    background-color: #dcfce7;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+}

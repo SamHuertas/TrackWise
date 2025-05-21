@@ -5,21 +5,17 @@ QFrame {
     padding: 5px 5px 5px 5px;
 }
 
-#NameL, #AmountL, #TargetL {
+ #NameL, #AmountL, #TargetL {
     border: none;
     background: transparent;
 }
 
-#NameL {
-    color: #374151;
+#NameL, #TargetL {
+    color: #6B7280;
 }
 
 #AmountL {
     color: #111827;
-}
-
-#TargetL {
-    color: #6B7280;
 }
 
 QProgressBar {

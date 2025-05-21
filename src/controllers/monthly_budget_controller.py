@@ -49,6 +49,7 @@ class MonthlyBudgetController(QWidget):
     def load_budget_data(self):
         table = self.main_window.MonthlyBudgetList
         table.setRowCount(0)
+        self.budgetmodel.db.connection.commit()
         budgets = self.budgetmodel.get_all_budget_summary()
         budgets.sort(key=self.sort_by_date)
         
@@ -56,22 +57,22 @@ class MonthlyBudgetController(QWidget):
             table.insertRow(row)
             table.setItem(row, 0, QTableWidgetItem(f"{QDate.fromString(str(budget['Month']), 'M').toString('MMMM')} {budget['Year']}"))
 
-            budget_amount = QTableWidgetItem(f"${budget['BudgetAmount']:.2f}")
+            budget_amount = QTableWidgetItem(f"₱{budget['BudgetAmount']:.2f}")
             budget_amount.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             budget_amount.setForeground(QtGui.QColor("#333333"))
             table.setItem(row, 1, budget_amount)
 
-            expenses = QTableWidgetItem(f"-${budget['TotalExpenses']:.2f}")
+            expenses = QTableWidgetItem(f"-₱{budget['TotalExpenses']:.2f}")
             expenses.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             expenses.setForeground(QtGui.QColor("#f44336"))  # Red color for expenses
             table.setItem(row, 2, expenses)
 
-            deposits = QTableWidgetItem(f"+${budget['TotalDeposits']:.2f}")
+            deposits = QTableWidgetItem(f"+₱{budget['TotalDeposits']:.2f}")
             deposits.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             deposits.setForeground(QtGui.QColor("#4a86e8"))  # Blue color for deposits
             table.setItem(row, 3, deposits)
 
-            remaining = QTableWidgetItem(f"${budget['Remaining']:.2f}")
+            remaining = QTableWidgetItem(f"₱{budget['Remaining']:.2f}")
             remaining.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             remaining.setForeground(QtGui.QColor("#4CAF50"))  # Green color for remaining
             table.setItem(row, 4, remaining)

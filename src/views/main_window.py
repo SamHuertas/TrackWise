@@ -26,27 +26,6 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.setup_sidebar()
         self.setup_connections()
         self.center_window()
-        
-        # Add a test savings card
-        test_account = {
-            "id": 1,
-            "name": "New Car",
-            "amount": 5000.00,
-            "target": 25000.00,
-            "progress": 20.0
-        }
-        test_account2 = {
-            "id": 1,
-            "name": "New Car",
-            "amount": 5000.00,
-            "target": 25000.00,
-            "progress": 20.0
-        }
-        savings_card = SavingsGoalWidget(test_account)
-        savings_card2 = SavingsGoalWidget(test_account2)
-        self.SavingsItems.layout().addWidget(savings_card)
-        self.SavingsItems.layout().addWidget(savings_card2)
-        self.SavingsItems.layout().addStretch()  # Keeps cards at the top
 
     def setup_sidebar(self):
         buttons = [self.HomeButton, self.MonthlyBudgetsButton, self.TransactionButton, self.SavingButton]
@@ -56,16 +35,24 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.AddBudgetButton.clicked.connect(self.budget_controller.input_budget)
         self.budget_controller.budget_added.connect(self.dashboard_controller.setup_month_combobox)
         self.budget_controller.budget_deleted.connect(self.dashboard_controller.setup_month_combobox)
+
         self.NewTransaction.clicked.connect(self.open_transaction_window)
         self.AddTransaction.clicked.connect(self.open_transaction_window)
+        
         self.NewGoalButton.clicked.connect(self.open_saving_window)
+        
         self.ViewAll.clicked.connect(self.sidebar_manager.show_transactions_page)
+        self.ViewAllSavings.clicked.connect(self.sidebar_manager.show_savings_page)
+
         self.transaction_controller.transaction_deleted.connect(self.handle_transaction_deleted)
+
         self.PrevPage.clicked.connect(self.transaction_controller.previous_page)
         self.NextPage.clicked.connect(self.transaction_controller.next_page)
+
         self.CategoriesSelect.currentTextChanged.connect(self.on_category_changed)
         self.TransactionDate.dateChanged.connect(self.transaction_controller.on_date_changed)
         self.FilterButton.clicked.connect(self.transaction_controller.on_filter_clicked)
+        self.savings_controller.savings_updated.connect(self.savings_controller.load_savings_goals)
 
     def open_transaction_window(self):
         self.transaction_window = TransactionWindow(self)
@@ -74,7 +61,17 @@ class MainWindow(QMainWindow, MainWindowUI):
 
     def open_saving_window(self):
         self.saving_window = SavingWindow(self)
+        self.saving_window.saving_added.connect(self.handle_savings_added)
         self.saving_window.show()
+
+    def handle_savings_added(self):
+        self.savings_controller.load_savings_goals()
+
+    def handle_deposit_added(self):
+        # Force immediate refresh of all components
+        self.dashboard_controller.refresh_dashboard()
+        self.budget_controller.load_budget_data()
+        self.savings_controller.load_savings_goals()
 
     def handle_transaction_deleted(self, budget_id):
         # Force immediate refresh of all components
@@ -98,9 +95,8 @@ class MainWindow(QMainWindow, MainWindowUI):
         y = (screen.height() - self.height()) // 2
         self.move(x, y)
 
-    
-    
 
 
 
-   
+
+

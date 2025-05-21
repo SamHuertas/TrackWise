@@ -42,47 +42,37 @@ class MonthlyBudgetModel:
     
     def get_budget_summary(self, budget_id: int):
         # Retrieve a summary of a budget entry by its ID
-        result = self.db.fetchone("""SELECT 
-            mb.BudgetID, 
-            mb.Month, 
-            mb.Year, 
-            mb.Amount AS BudgetAmount,
-            COALESCE(SUM(e.Amount), 0) AS TotalExpenses,
-            COALESCE(SUM(d.Amount), 0) AS TotalDeposits,
-            mb.Amount - COALESCE(SUM(e.Amount), 0) - COALESCE(SUM(d.Amount), 0) AS Remaining
-            FROM 
-                MonthlyBudget mb
-            LEFT JOIN 
-                Expenses e ON mb.BudgetID = e.BudgetID
-            LEFT JOIN 
-                Deposits d ON mb.BudgetID = d.BudgetID
-            WHERE 
-                mb.BudgetID = %s
-            GROUP BY 
-                mb.BudgetID, mb.Month, mb.Year, mb.Amount""", (budget_id,))
+        result = self.db.fetchone("""
+            SELECT 
+                mb.BudgetID, 
+                mb.Month, 
+                mb.Year, 
+                mb.Amount AS BudgetAmount,
+                (SELECT COALESCE(SUM(Amount), 0) FROM Expenses WHERE BudgetID = mb.BudgetID) AS TotalExpenses,
+                (SELECT COALESCE(SUM(Amount), 0) FROM Deposits WHERE BudgetID = mb.BudgetID) AS TotalDeposits,
+                mb.Amount - 
+                (SELECT COALESCE(SUM(Amount), 0) FROM Expenses WHERE BudgetID = mb.BudgetID) -
+                (SELECT COALESCE(SUM(Amount), 0) FROM Deposits WHERE BudgetID = mb.BudgetID) AS Remaining
+            FROM MonthlyBudget mb
+            WHERE mb.BudgetID = %s
+        """, (budget_id,))
         return result if result else None
     
     def get_all_budget_summary(self):
-        # Retrieve all budget entries
-        result = self.db.fetchall("""SELECT 
-            mb.BudgetID, 
-            mb.Month, 
-            mb.Year, 
-            mb.Amount AS BudgetAmount,
-            COALESCE(SUM(e.Amount), 0) AS TotalExpenses,
-            COALESCE(SUM(d.Amount), 0) AS TotalDeposits,
-            mb.Amount - COALESCE(SUM(e.Amount), 0) - COALESCE(SUM(d.Amount), 0) AS Remaining
-            FROM 
-                MonthlyBudget mb
-            LEFT JOIN 
-                Expenses e ON mb.BudgetID = e.BudgetID
-            LEFT JOIN 
-                Deposits d ON mb.BudgetID = d.BudgetID
-            GROUP BY 
-                mb.BudgetID, mb.Month, mb.Year, mb.Amount
-            ORDER BY 
-                mb.Year DESC, mb.Month DESC""")
-        return result if result else None
+        return self.db.fetchall("""
+            SELECT 
+                mb.BudgetID, 
+                mb.Month, 
+                mb.Year, 
+                mb.Amount AS BudgetAmount,
+                (SELECT COALESCE(SUM(Amount), 0) FROM Expenses WHERE BudgetID = mb.BudgetID) AS TotalExpenses,
+                (SELECT COALESCE(SUM(Amount), 0) FROM Deposits WHERE BudgetID = mb.BudgetID) AS TotalDeposits,
+                mb.Amount - 
+                (SELECT COALESCE(SUM(Amount), 0) FROM Expenses WHERE BudgetID = mb.BudgetID) -
+                (SELECT COALESCE(SUM(Amount), 0) FROM Deposits WHERE BudgetID = mb.BudgetID) AS Remaining
+            FROM MonthlyBudget mb
+            ORDER BY mb.Year DESC, mb.Month DESC
+        """)
 
     def get_month_name(self, month: int):
         # Retrieve the name of a month by its number
@@ -91,3 +81,8 @@ class MonthlyBudgetModel:
             "July", "August", "September", "October", "November", "December"
         ]
         return month_names[month - 1] if 1 <= month <= 12 else None
+    
+    def get_budget_id_by_month_year(self, month: int, year: int):
+        # Retrieve the budget ID for a specific month and year
+        result = self.db.fetchone("SELECT BudgetID FROM MonthlyBudget WHERE Month = %s AND Year = %s", (month, year))
+        return result['BudgetID'] if result else None

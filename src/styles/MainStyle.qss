@@ -55,7 +55,7 @@ QProgressBar::chunk {
     color: #6C6F73;
 }
 
-#ViewAll, #NewGoal {
+#ViewAll, #ViewAllSavings {
     background-color: white;
     color: #3B82F6;
     border: none;

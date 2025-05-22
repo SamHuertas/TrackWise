@@ -15,6 +15,7 @@ class SavingsController(QWidget):
         self.main_window = main_window
         self.savings_model = savings_model
         self.load_savings_goals()
+        self.update_total_savings()
     
     def load_savings_goals(self):
         self.savings_model.db.connection.commit()
@@ -35,6 +36,7 @@ class SavingsController(QWidget):
             savings_card.deposit_requested.connect(self.show_deposit_window)
             layout.addWidget(savings_card)
         layout.addStretch()
+        self.update_total_savings()
 
     def show_deposit_window(self, savings_id):
         deposit_window = DepositWindow(self.main_window, savings_id)
@@ -45,4 +47,10 @@ class SavingsController(QWidget):
     def on_deposit_added(self):
         self.load_savings_goals()
         self.main_window.dashboard_controller.refresh_dashboard()
+        self.update_total_savings()
+
+    def update_total_savings(self):
+        total_savings = self.savings_model.sum_of_all_deposits()
+        amount = total_savings['total'] if total_savings else 0
+        self.main_window.AccumSavings.setText(f"₱{amount:.2f}")
 

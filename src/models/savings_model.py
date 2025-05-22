@@ -110,3 +110,8 @@ class SavingsModel:
     def delete_deposit(self, deposit_id: int):
         # Delete a specific deposit
         self.db.execute("DELETE FROM Deposits WHERE DepositsID = %s", (deposit_id,)) 
+
+    def sum_of_all_deposits(self):
+        # Get the total amount of all deposits with explicit column alias
+        result = self.db.fetchone("SELECT COALESCE(SUM(Amount), 0) as total FROM Deposits")
+        return result  

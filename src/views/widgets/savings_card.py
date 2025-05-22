@@ -6,6 +6,7 @@ from pathlib import Path
 
 class SavingsGoalWidget(QFrame):
     deposit_requested = pyqtSignal(int)  # Signal for deposit action
+    delete_requested = pyqtSignal(int)  # Signal for delete action
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -28,7 +29,7 @@ class SavingsGoalWidget(QFrame):
         self.grid.addWidget(self.name_label, 0, 0, 1, 1, alignment=Qt.AlignmentFlag.AlignLeft)
 
         # Amount label
-        self.amount_label = QLabel("$0.00")
+        self.amount_label = QLabel("₱0.00")
         self.amount_label.setObjectName("AmountL")
         font = QFont()
         font.setPointSize(15)
@@ -36,7 +37,7 @@ class SavingsGoalWidget(QFrame):
         self.grid.addWidget(self.amount_label, 1, 0, 1, 1, alignment=Qt.AlignmentFlag.AlignLeft)
 
         # Target label
-        self.target_label = QLabel("of $0.00")
+        self.target_label = QLabel("of ₱0.00")
         self.target_label.setObjectName("TargetL")
         font = QFont()
         font.setPointSize(12)
@@ -66,6 +67,7 @@ class SavingsGoalWidget(QFrame):
         icon1.addPixmap(QPixmap("src/assets/trash.svg"), QIcon.Mode.Normal, QIcon.State.On)
         self.delete_btn.setIcon(icon1)
         self.delete_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.delete_btn.clicked.connect(self.on_delete_clicked)
         self.button_layout.addWidget(self.delete_btn)
 
         # Deposit button
@@ -80,11 +82,11 @@ class SavingsGoalWidget(QFrame):
     def update_data(self, data):
         """Update the widget with new data"""
         # Update name
-        self.name_label.setText(data['Name'])
+        self.name_label.setText(data['Name'].title())
         
         # Update amount and target
-        self.amount_label.setText(f"${data['TotalDeposits']:,.2f}")
-        self.target_label.setText(f"of ${data['Goal Amount']:,.2f}")
+        self.amount_label.setText(f"₱{data['TotalDeposits']:,.2f}")
+        self.target_label.setText(f"of ₱{data['Goal Amount']:,.2f}")
         
         # Update progress
         progress = (data['TotalDeposits'] / data['Goal Amount'] * 100) if data['Goal Amount'] > 0 else 0
@@ -95,3 +97,6 @@ class SavingsGoalWidget(QFrame):
 
     def on_deposit_clicked(self):
         self.deposit_requested.emit(self.savings_id)
+
+    def on_delete_clicked(self):
+        self.delete_requested.emit(self.savings_id)

@@ -81,13 +81,3 @@ class DepositWindow(QDialog):
             
         except ValueError:
             QMessageBox.warning(self, "Invalid Input", "Please enter a valid amount")
-
-
-
-
-
-
-
-
-
-

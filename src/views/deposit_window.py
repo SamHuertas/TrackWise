@@ -72,7 +72,18 @@ class DepositWindow(QDialog):
             if not budget_id:
                 QMessageBox.warning(self, "Error", "Please select a monthly budget")
                 return
-                
+
+            current_index = self.ui.MonthlyBudgetInput.currentIndex()
+            if current_index >= 0 and self.budgets:
+                remaining_balance = self.budgets[current_index]['Remaining']
+                if amount > remaining_balance:
+                    QMessageBox.warning(
+                        self, 
+                        "Invalid Amount", 
+                        f"Amount exceeds remaining balance (₱{remaining_balance:.2f})"
+                    )
+                    return
+
             # Add deposit to savings with current date
             current_date = QDate.currentDate().toString(Qt.DateFormat.ISODate)
             self.savings_model.add_deposit(budget_id, self.savings_id, current_date, amount)

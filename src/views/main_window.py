@@ -20,7 +20,7 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.expense_model = ExpenseModel()
         self.savings_model = SavingsModel()
         self.budget_controller = MonthlyBudgetController(self, self.budget_model)
-        self.dashboard_controller = DashboardController(self, self.budget_model)
+        self.dashboard_controller = DashboardController(self, self.budget_model, self.savings_model)
         self.transaction_controller = TransactionManagementController(self, self.expense_model)
         self.savings_controller = SavingsController(self, self.savings_model)   
         self.setup_sidebar()

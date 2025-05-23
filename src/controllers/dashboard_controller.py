@@ -2,9 +2,10 @@ from PyQt6.QtCore import QDate
 from datetime import datetime
 
 class DashboardController:
-    def __init__(self, main_window, budget_model):
+    def __init__(self, main_window, budget_model, savings_model):
         self.main_window = main_window
         self.budget_model = budget_model
+        self.savings_model = savings_model
         self.setup_month_combobox()
         self.setup_connections()
 
@@ -60,6 +61,9 @@ class DashboardController:
     def update_dashboard(self, budget_id):
         self.budget_model.db.connection.commit()
         budget_summary = self.budget_model.get_budget_summary(budget_id)
+        total_savings = self.savings_model.sum_of_all_deposits()
+        total_amount = total_savings['total'] if total_savings else 0
+        self.main_window.Money3.setText(f"₱{total_amount:.2f}")
 
         if budget_summary:
             self.main_window.Money.setText(f"₱{budget_summary['BudgetAmount']:.2f}")
@@ -70,7 +74,7 @@ class DashboardController:
             self.main_window.PercentageUsed.setText(f"{percentage:.0f}% of monthly budget")
             
             savings = budget_summary['TotalDeposits']
-            self.main_window.Money3.setText(f"₱{savings:.2f}")
+
             if savings > 0:
                 self.main_window.Tally.setText(f"+₱{savings:.2f} this month")
             else:
@@ -80,10 +84,10 @@ class DashboardController:
             self.main_window.Money2.setText("₱0.00")
             self.main_window.progressBar.setValue(0)
             self.main_window.PercentageUsed.setText("0% of monthly budget")
-            self.main_window.Money3.setText("₱0.00")
-            self.main_window.Tally.setText("No budget set")
+            self.main_window.Tally.setText("₱0.00")
         
     def refresh_dashboard(self):
         if self.main_window.Month.count() > 0:
             current_budget_id = self.main_window.Month.currentData()
             self.update_dashboard(current_budget_id)
+    

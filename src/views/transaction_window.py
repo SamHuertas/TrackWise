@@ -62,6 +62,8 @@ class TransactionWindow(QDialog):
                 description=description,
                 date=date.toString(Qt.DateFormat.ISODate)
             )
+            # Ensure database changes are committed
+            self.expense_model.db.connection.commit()
             print("Expense added successfully")         
             # Emit signal to update the dashboard and refresh transaction table
             self.clear_form()

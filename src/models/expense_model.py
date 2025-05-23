@@ -56,6 +56,6 @@ class ExpenseModel:
         # Update an existing expense entry
         self.db.execute("UPDATE Expenses SET Amount = %s, Category = %s, Description = %s WHERE ExpensesID = %s", (amount, category, description, expense_id))
 
-    def get_top4_expenses(self):
-        # Get the top 4 expenses ordered by date (most recent first)
-        return self.db.fetchall("SELECT * FROM Expenses ORDER BY Date DESC LIMIT 4")
+    def get_top5_expenses(self):
+        # Get the top 5 most recently added expenses by ordering by ExpensesID
+        return self.db.fetchall("SELECT * FROM Expenses ORDER BY ExpensesID DESC LIMIT 5")

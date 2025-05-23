@@ -1,29 +1,32 @@
-QWidget {
-    background: transparent
+#TransactionCard {
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    padding: 4px;
 }
 
 #icon_widget {
     background: #DADADA; 
-    border-radius: 8px;
+    border-radius: 6px;
 }
 
-#category_label{
+#category_label {
     font-size: 16px;
     font-weight: 600;
 }
 
-#description_label{
+#description_label {
     color: #888; 
     font-size: 13px;
 }
 
-#amount_label{
+#amount_label {
     color: #f44336; 
     font-size: 18px; 
     font-weight: 600;
 }
 
-#date_label{
+#date_label {
     color: #888; 
     font-size: 12px;
 }

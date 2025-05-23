@@ -10,7 +10,7 @@ class DashboardController:
         self.savings_model = savings_model
         self.setup_month_combobox()
         self.setup_connections()
-        self.load_transactions()
+        self.load_recent_transactions()
 
     def setup_month_combobox(self):
         # Initialize the month combobox with months that have budgets.
@@ -94,7 +94,7 @@ class DashboardController:
             current_budget_id = self.main_window.Month.currentData()
             self.update_dashboard(current_budget_id)
     
-    def load_transactions(self):
+    def load_recent_transactions(self):
         # Clear the transaction list layout first
         layout = self.main_window.TransactionContents.layout()
         while layout.count():
@@ -103,10 +103,10 @@ class DashboardController:
             if widget:
                 widget.deleteLater()
 
-        # Get the top 4 most recent transactions
-        top4 = self.expense_model.get_top4_expenses()
+        # Get the top 5 most recent transactions
+        top5 = self.expense_model.get_top5_expenses()
 
-        for transaction in top4:
+        for transaction in top5:
             transaction_card = TransactionCard()
             transaction_card.update_data(transaction) 
             layout.addWidget(transaction_card)

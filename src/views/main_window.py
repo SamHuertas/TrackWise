@@ -80,19 +80,22 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.dashboard_controller.refresh_dashboard()
         self.budget_controller.load_budget_data()
         self.transaction_controller.load_transactions()
+        self.dashboard_controller.load_recent_transactions()
 
     def handle_transaction_edited(self, transaction_id):
         # Force immediate refresh of all components
         self.dashboard_controller.refresh_dashboard()
         self.budget_controller.load_budget_data()
         self.transaction_controller.load_transactions()
+        self.dashboard_controller.load_recent_transactions()
 
     def handle_expense_added(self, budget_id):
         # Force immediate refresh of all components
         self.dashboard_controller.refresh_dashboard()
         self.budget_controller.load_budget_data()
         self.transaction_controller.load_transactions()
-
+        self.dashboard_controller.load_recent_transactions()
+        
     def on_category_changed(self, category):
         self.transaction_controller.current_page = 1  # Reset to first page when filter changes
         self.transaction_controller.load_transactions()

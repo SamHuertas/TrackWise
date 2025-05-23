@@ -55,6 +55,26 @@ class EditTransactionWindow(QDialog):
             QMessageBox.warning(self, "Input Error", "Amount must be greater than zero.")
             return
         
+        # Get the budget ID for this transaction
+        expense = self.expense_model.get_expense(self.transaction['ExpensesID'])
+        budget_id = expense['BudgetID'] if expense else None
+        if budget_id is not None:
+            # Get the budget summary (which includes the Remaining column)
+            budget_model = MonthlyBudgetModel()
+            budget_summary = budget_model.get_budget_summary(budget_id)
+            if budget_summary:
+                remaining = float(budget_summary['Remaining'])
+                original_amount = float(self.transaction['Amount'])
+                new_amount = float(amount)
+                new_remaining = remaining + original_amount - new_amount
+                if new_remaining < 0:
+                    QMessageBox.warning(
+                        self,
+                        "Budget Exceeded",
+                        f"Amount exceeds remaining budget (₱{remaining:.2f})"
+                    )
+                    return
+        
         # Update the transaction in the database
         self.expense_model.update_expense(self.transaction['ExpensesID'], amount, category, description)
         self.accept()  # Close the dialog

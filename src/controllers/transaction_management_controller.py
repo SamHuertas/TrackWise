@@ -2,10 +2,12 @@ from PyQt6 import QtWidgets, QtCore, QtGui
 from PyQt6.QtCore import Qt, QDate, pyqtSignal
 from PyQt6.QtWidgets import QWidget, QTableWidgetItem, QMessageBox
 from src.views.widgets.transaction_action_buttons import TransactionActionButtons
+from src.views.edit_transaction_window import EditTransactionWindow
 import math
 
 class TransactionManagementController(QWidget):
     transaction_deleted = pyqtSignal(int)  # Signal emitted when a transaction is deleted
+    transaction_edited = pyqtSignal(int)  # Signal emitted when a transaction is edited
 
     def __init__(self, main_window, expense_model):
         super().__init__()
@@ -166,6 +168,7 @@ class TransactionManagementController(QWidget):
             # Actions
             action_buttons = TransactionActionButtons(transaction['ExpensesID'])
             action_buttons.delete_transaction_requested.connect(self.delete_transaction)
+            action_buttons.edit_transaction_requested.connect(self.edit_transaction)
             table.setCellWidget(row, 4, action_buttons)
         
         print("Transactions loaded successfully")  # Debug print
@@ -206,6 +209,18 @@ class TransactionManagementController(QWidget):
                 
                 # Emit signal for any other components that need to know
                 self.transaction_deleted.emit(budget_id)
+
+    def edit_transaction(self, transaction_id):
+        transaction = self.expense_model.get_expense(transaction_id)
+        edit_window = EditTransactionWindow(self.main_window, transaction)
+        edit_window.exec()
+        if edit_window.result() == QtWidgets.QDialog.DialogCode.Accepted:
+            # Refresh all components after editing
+            self.load_transactions()
+            self.main_window.dashboard_controller.refresh_dashboard()
+            self.main_window.budget_controller.load_budget_data()
+            self.transaction_edited.emit(transaction['BudgetID']) 
+
 
     def on_date_changed(self, date):
         self.current_page = 1  # Reset to first page when date changes

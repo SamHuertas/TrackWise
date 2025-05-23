@@ -50,4 +50,8 @@ class ExpenseModel:
 
     def get_all_transactions(self):
         # Get all transactions ordered by date (most recent first)
-        return self.db.fetchall("SELECT ExpensesID, Date, Category, Description, Amount FROM Expenses ORDER BY Date DESC") 
+        return self.db.fetchall("SELECT ExpensesID, Date, Category, Description, Amount FROM Expenses ORDER BY Date DESC")
+     
+    def update_expense(self, expense_id: int, amount: float, category: str, description: str):
+        # Update an existing expense entry
+        self.db.execute("UPDATE Expenses SET Amount = %s, Category = %s, Description = %s WHERE ExpensesID = %s", (amount, category, description, expense_id))

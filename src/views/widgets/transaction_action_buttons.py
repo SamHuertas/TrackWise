@@ -6,6 +6,7 @@ from pathlib import Path
 
 class TransactionActionButtons(QWidget):
     delete_transaction_requested = pyqtSignal(int)
+    edit_transaction_requested = pyqtSignal(int)
 
     def __init__(self, transaction_id):
         super().__init__()
@@ -26,6 +27,7 @@ class TransactionActionButtons(QWidget):
         self.EditButton.setFixedSize(20, 20)
         self.EditButton.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         self.EditButton.setStyleSheet(Path("src/styles/ButtonActionStyle.qss").read_text())
+        self.EditButton.clicked.connect(self.on_edit_clicked)
         leftspacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         layout.addItem(leftspacer)
         layout.addWidget(self.EditButton)
@@ -51,3 +53,6 @@ class TransactionActionButtons(QWidget):
 
     def on_delete_clicked(self):
         self.delete_transaction_requested.emit(self.transaction_id) 
+
+    def on_edit_clicked(self):
+        self.edit_transaction_requested.emit(self.transaction_id)

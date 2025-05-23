@@ -19,12 +19,16 @@ class DepositWindow(QDialog):
         self.budget_model = MonthlyBudgetModel()
         self.main_window = main_window
         self.savings_id = savings_id
+        self.setup_header()
         self.setup_combobox_and_remaining_balance()
         self.setup_connections()
 
     def setup_connections(self):
         self.ui.DepositButton.clicked.connect(self.handle_deposit)
         self.ui.CancelButton.clicked.connect(self.close)
+
+    def setup_header(self):
+        self.ui.NewDeposit.setText("Deposit to " + self.savings_model.get_savings_goal(self.savings_id)['Name'].title())
 
     def setup_combobox_and_remaining_balance(self):
         self.ui.MonthlyBudgetInput.clear()

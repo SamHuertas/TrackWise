@@ -22,7 +22,7 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.budget_controller = MonthlyBudgetController(self, self.budget_model)
         self.dashboard_controller = DashboardController(self, self.budget_model)
         self.transaction_controller = TransactionManagementController(self, self.expense_model)
-        self.savings_controller = SavingsController(self, self.savings_model)
+        self.savings_controller = SavingsController(self, self.savings_model)   
         self.setup_sidebar()
         self.setup_connections()
         self.center_window()
@@ -45,6 +45,7 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.ViewAllSavings.clicked.connect(self.sidebar_manager.show_savings_page)
 
         self.transaction_controller.transaction_deleted.connect(self.handle_transaction_deleted)
+        self.transaction_controller.transaction_edited.connect(self.handle_transaction_edited)
 
         self.PrevPage.clicked.connect(self.transaction_controller.previous_page)
         self.NextPage.clicked.connect(self.transaction_controller.next_page)
@@ -74,6 +75,12 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.savings_controller.load_savings_goals()
 
     def handle_transaction_deleted(self, budget_id):
+        # Force immediate refresh of all components
+        self.dashboard_controller.refresh_dashboard()
+        self.budget_controller.load_budget_data()
+        self.transaction_controller.load_transactions()
+
+    def handle_transaction_edited(self, transaction_id):
         # Force immediate refresh of all components
         self.dashboard_controller.refresh_dashboard()
         self.budget_controller.load_budget_data()

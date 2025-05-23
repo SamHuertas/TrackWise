@@ -5,10 +5,12 @@ from PyQt6.QtWidgets import QTableWidget, QTableWidgetItem, QMessageBox, QWidget
 from src.database.db_manager import DBManager
 from src.models.monthly_budget_model import MonthlyBudgetModel
 from src.views.widgets.budget_action_buttons import BudgetActionButtons
+from src.views.edit_budget_window import EditBudgetWindow
 
 class MonthlyBudgetController(QWidget):
     budget_added = pyqtSignal()  # Signal emitted when a new budget is added
     budget_deleted = pyqtSignal()  # Signal emitted when a budget is deleted
+    budget_edited = pyqtSignal()  # Signal emitted when a budget is edited
 
     def __init__(self, main_window, budget_model):
         super().__init__()
@@ -79,6 +81,7 @@ class MonthlyBudgetController(QWidget):
             
             action_buttons = BudgetActionButtons(budget['BudgetID'])
             action_buttons.delete_budget_requested.connect(self.delete_budget)
+            action_buttons.edit_budget_requested.connect(self.edit_budget)
             table.setCellWidget(row, 5, action_buttons)
 
     def input_budget(self):
@@ -123,3 +126,12 @@ class MonthlyBudgetController(QWidget):
                 print("Budget deleted successfully")  # Debug print
                 self.load_budget_data()
                 self.budget_deleted.emit()
+
+    def edit_budget(self, budget_id):
+        budget = self.budgetmodel.get_budget_by_id(budget_id)
+        edit_budget_window = EditBudgetWindow(self.main_window, budget)
+        edit_budget_window.budget = budget
+        edit_budget_window.exec()
+        if edit_budget_window.result() == QtWidgets.QDialog.DialogCode.Accepted:
+            self.load_budget_data()
+            self.budget_edited.emit()

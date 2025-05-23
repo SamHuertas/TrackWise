@@ -35,6 +35,7 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.AddBudgetButton.clicked.connect(self.budget_controller.input_budget)
         self.budget_controller.budget_added.connect(self.dashboard_controller.setup_month_combobox)
         self.budget_controller.budget_deleted.connect(self.dashboard_controller.setup_month_combobox)
+        self.budget_controller.budget_edited.connect(self.dashboard_controller.setup_month_combobox)
 
         self.NewTransaction.clicked.connect(self.open_transaction_window)
         self.AddTransaction.clicked.connect(self.open_transaction_window)

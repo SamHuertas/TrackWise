@@ -12,7 +12,7 @@ class MonthlyBudgetModel:
 
     def get_budget_by_id(self, budget_id: int):
         # Retrieve a budget entry by its ID
-        result = self.db.fetchone("SELECT * FROM MonthlyBudget WHERE id = %s", (budget_id,))
+        result = self.db.fetchone("SELECT * FROM MonthlyBudget WHERE BudgetID = %s", (budget_id,))
         return result if result else None
 
     def get_budget_for_month(self, month: int, year: int):
@@ -86,3 +86,8 @@ class MonthlyBudgetModel:
         # Retrieve the budget ID for a specific month and year
         result = self.db.fetchone("SELECT BudgetID FROM MonthlyBudget WHERE Month = %s AND Year = %s", (month, year))
         return result['BudgetID'] if result else None
+    
+    def update_budget(self, budget_id: int, amount: float):
+        # Update the budget amount for a specific budget ID
+        self.db.execute("UPDATE MonthlyBudget SET Amount = %s WHERE BudgetID = %s", (amount, budget_id))
+        return True

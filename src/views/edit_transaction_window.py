@@ -5,8 +5,6 @@ from src.models.expense_model import ExpenseModel
 from src.models.monthly_budget_model import MonthlyBudgetModel
 
 class EditTransactionWindow(QDialog):
-
-
     def __init__(self, main_window, transaction):
         super().__init__()
         self.ui = Ui_EditTransactionWindow()

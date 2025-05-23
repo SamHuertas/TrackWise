@@ -1,0 +1,29 @@
+QWidget {
+    background: transparent
+}
+
+#icon_widget {
+    background: #DADADA; 
+    border-radius: 8px;
+}
+
+#category_label{
+    font-size: 16px;
+    font-weight: 600;
+}
+
+#description_label{
+    color: #888; 
+    font-size: 13px;
+}
+
+#amount_label{
+    color: #f44336; 
+    font-size: 18px; 
+    font-weight: 600;
+}
+
+#date_label{
+    color: #888; 
+    font-size: 12px;
+}

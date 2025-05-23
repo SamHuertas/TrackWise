@@ -1,13 +1,16 @@
 from PyQt6.QtCore import QDate
 from datetime import datetime
+from src.views.widgets.transaction_card import TransactionCard
 
 class DashboardController:
-    def __init__(self, main_window, budget_model, savings_model):
+    def __init__(self, main_window, budget_model, savings_model, expense_model):
         self.main_window = main_window
         self.budget_model = budget_model
+        self.expense_model = expense_model
         self.savings_model = savings_model
         self.setup_month_combobox()
         self.setup_connections()
+        self.load_transactions()
 
     def setup_month_combobox(self):
         # Initialize the month combobox with months that have budgets.
@@ -91,3 +94,19 @@ class DashboardController:
             current_budget_id = self.main_window.Month.currentData()
             self.update_dashboard(current_budget_id)
     
+    def load_transactions(self):
+        # Clear the transaction list layout first
+        layout = self.main_window.TransactionContents.layout()
+        while layout.count():
+            item = layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+
+        # Get the top 4 most recent transactions
+        top4 = self.expense_model.get_top4_expenses()
+
+        for transaction in top4:
+            transaction_card = TransactionCard()
+            transaction_card.update_data(transaction) 
+            layout.addWidget(transaction_card)

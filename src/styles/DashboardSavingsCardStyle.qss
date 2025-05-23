@@ -1,0 +1,36 @@
+#DashboardSavingsCard {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+#title_label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+#amount_label {
+    font-size: 22px;
+    font-weight: normal;
+    color: #000;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+QProgressBar {
+    border: none;
+    background-color: #E5E7EB;
+    height: 5px;
+    border-radius: 2px;
+}
+
+QProgressBar::chunk {
+    background-color: #4F46E5; /* A shade of purple/blue */
+    border-radius: 2px;
+}
+
+#percentage_label, #target_label {
+    font-size: 13px;
+    color: #888;
+} 

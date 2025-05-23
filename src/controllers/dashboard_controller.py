@@ -11,6 +11,7 @@ class DashboardController:
         self.setup_month_combobox()
         self.setup_connections()
         self.load_recent_transactions()
+        self.load_top_savings_goals()
 
     def setup_month_combobox(self):
         # Initialize the month combobox with months that have budgets.
@@ -93,6 +94,7 @@ class DashboardController:
         if self.main_window.Month.count() > 0:
             current_budget_id = self.main_window.Month.currentData()
             self.update_dashboard(current_budget_id)
+        self.load_top_savings_goals()
     
     def load_recent_transactions(self):
         # Clear the transaction list layout first
@@ -110,3 +112,35 @@ class DashboardController:
             transaction_card = TransactionCard()
             transaction_card.update_data(transaction) 
             layout.addWidget(transaction_card)
+
+    def load_top_savings_goals(self):
+        # Clear existing widgets
+        layout = self.main_window.SavingsContents.layout()
+        while layout.count():
+            item = layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        # Get all savings goals
+        savings_goals = self.savings_model.get_all_savings_summaries()
+
+        # Sort savings goals by completion percentage
+        def get_progress(goal):
+            goal_amount = goal['Goal Amount']
+            total_deposits = goal['TotalDeposits']
+            return (total_deposits / goal_amount) if goal_amount > 0 else 0
+
+        sorted_goals = sorted(savings_goals, key=get_progress, reverse=True)
+
+        # Get the top 3 goals
+        top_3_goals = sorted_goals[:3]
+
+        # Create and add DashboardSavingsCard for top 3 goals
+        from src.views.widgets.dashboard_savings_card import DashboardSavingsCard
+        for goal in top_3_goals:
+            savings_card = DashboardSavingsCard()
+            savings_card.update_data(goal)
+            layout.addWidget(savings_card)
+
+
+

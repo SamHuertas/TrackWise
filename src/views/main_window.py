@@ -68,6 +68,7 @@ class MainWindow(QMainWindow, MainWindowUI):
 
     def handle_savings_added(self):
         self.savings_controller.load_savings_goals()
+        self.dashboard_controller.load_top_savings_goals()
 
     def handle_deposit_added(self):
         # Force immediate refresh of all components
@@ -95,7 +96,7 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.budget_controller.load_budget_data()
         self.transaction_controller.load_transactions()
         self.dashboard_controller.load_recent_transactions()
-        
+
     def on_category_changed(self, category):
         self.transaction_controller.current_page = 1  # Reset to first page when filter changes
         self.transaction_controller.load_transactions()

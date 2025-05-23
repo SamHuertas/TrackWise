@@ -70,6 +70,7 @@ class SavingsController(QWidget):
         if reply == QMessageBox.StandardButton.Yes:
             self.savings_model.delete_savings_goal(savings_id)
             self.main_window.savings_controller.load_savings_goals()
+            self.main_window.dashboard_controller.load_top_savings_goals()
             self.main_window.dashboard_controller.refresh_dashboard()
             self.main_window.budget_controller.load_budget_data()
             self.update_total_savings()

@@ -12,6 +12,7 @@ class DashboardController:
         self.setup_connections()
         self.load_recent_transactions()
         self.load_top_savings_goals()
+        self.current_budget_id = None
 
     def setup_month_combobox(self):
         # Initialize the month combobox with months that have budgets.
@@ -63,6 +64,7 @@ class DashboardController:
             self.update_dashboard(budget_id)
 
     def update_dashboard(self, budget_id):
+        self.current_budget_id = budget_id
         self.budget_model.db.connection.commit()
         budget_summary = self.budget_model.get_budget_summary(budget_id)
         total_savings = self.savings_model.sum_of_all_deposits()
@@ -83,12 +85,58 @@ class DashboardController:
                 self.main_window.Tally.setText(f"+₱{savings:.2f} this month")
             else:
                 self.main_window.Tally.setText("No deposits this month")
+            
+            self.update_expense_breakdown(budget_id)
         else:
             self.main_window.Money.setText("₱0.00")
             self.main_window.Money2.setText("₱0.00")
             self.main_window.progressBar.setValue(0)
             self.main_window.PercentageUsed.setText("0% of monthly budget")
             self.main_window.Tally.setText("₱0.00")
+    
+    def update_expense_breakdown(self, budget_id):
+        """Fetch expense breakdown by category and update the donut chart based on current period selection"""
+        # Get current selection from MonthSelect dropdown
+        current_index = self.main_window.MonthSelect.currentIndex()
+        period_map = {
+            0: "month",  # This Month
+            1: "week",   # This Week  
+            2: "day"     # This Day
+        }
+        
+        period = period_map.get(current_index, "month")
+        self.update_expense_breakdown_by_period(budget_id, period)
+
+    def update_expense_breakdown_by_period(self, budget_id, period="month"):
+        """Update expense breakdown based on selected time period"""
+        if period == "week":
+            expenses = self.expense_model.get_expenses_by_budget_this_week(budget_id)
+        elif period == "day":
+            expenses = self.expense_model.get_expenses_by_budget_today(budget_id)
+        else:  # Default to month
+            expenses = self.expense_model.get_expenses_by_budget(budget_id)
+        
+        category_totals = {}
+        for expense in expenses:
+            category = expense['Category']
+            amount = expense['Amount']
+            category_totals[category] = category_totals.get(category, 0) + amount
+            
+        self.main_window.donut_chart.set_data(category_totals)
+
+    def on_expense_period_changed(self, index):
+        """Handle changes to the expense breakdown period dropdown"""
+        if self.current_budget_id is None:
+            return
+            
+        period_map = {
+            0: "month",  # This Month
+            1: "week",   # This Week  
+            2: "day"     # This Day
+        }
+        
+        period = period_map.get(index, "month")
+        self.update_expense_breakdown_by_period(self.current_budget_id, period)
         
     def refresh_dashboard(self):
         if self.main_window.Month.count() > 0:

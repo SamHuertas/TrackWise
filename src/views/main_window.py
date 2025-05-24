@@ -1,4 +1,5 @@
 from PyQt6.QtWidgets import QMainWindow
+from PyQt6 import QtWidgets
 from src.ui.main_window_ui import Ui_MainWindow as MainWindowUI
 from src.utils.sidebar_utils import SidebarManager
 from src.controllers.monthly_budget_controller import MonthlyBudgetController
@@ -11,6 +12,7 @@ from src.views.saving_window import SavingWindow
 from src.views.widgets.savings_card import SavingsGoalWidget
 from src.controllers.savings_controller import SavingsController
 from src.models.savings_model import SavingsModel
+from src.views.widgets.donut_chart import DonutChart
 
 class MainWindow(QMainWindow, MainWindowUI):
     def __init__(self):
@@ -26,6 +28,15 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.setup_sidebar()
         self.setup_connections()
         self.center_window()
+        self.setup_donut_chart()
+
+    def setup_donut_chart(self):
+        # Remove the spacer item in ExpenseBreakdownFrame
+        for i in reversed(range(self.verticalLayout_7.count())):
+            item = self.verticalLayout_7.itemAt(i)
+            if isinstance(item, QtWidgets.QSpacerItem):
+                self.verticalLayout_7.removeItem(item)
+                break
 
     def setup_sidebar(self):
         buttons = [self.HomeButton, self.MonthlyBudgetsButton, self.TransactionButton, self.SavingButton]
@@ -46,6 +57,8 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.ViewAllSavings.clicked.connect(self.sidebar_manager.show_savings_page)
 
         self.transaction_controller.transaction_deleted.connect(self.handle_transaction_deleted)
+
+        self.transaction_controller.transaction_deleted.connect(self.handle_transaction_deleted)
         self.transaction_controller.transaction_edited.connect(self.handle_transaction_edited)
 
         self.PrevPage.clicked.connect(self.transaction_controller.previous_page)
@@ -55,6 +68,8 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.TransactionDate.dateChanged.connect(self.transaction_controller.on_date_changed)
         self.FilterButton.clicked.connect(self.transaction_controller.on_filter_clicked)
         self.savings_controller.savings_updated.connect(self.savings_controller.load_savings_goals)
+
+        self.MonthSelect.currentIndexChanged.connect(self.dashboard_controller.on_expense_period_changed)
 
     def open_transaction_window(self):
         self.transaction_window = TransactionWindow(self)
@@ -82,6 +97,8 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.budget_controller.load_budget_data()
         self.transaction_controller.load_transactions()
         self.dashboard_controller.load_recent_transactions()
+        if self.dashboard_controller.current_budget_id == budget_id:
+            self.dashboard_controller.update_expense_breakdown(budget_id)
 
     def handle_transaction_edited(self, transaction_id):
         # Force immediate refresh of all components
@@ -96,6 +113,8 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.budget_controller.load_budget_data()
         self.transaction_controller.load_transactions()
         self.dashboard_controller.load_recent_transactions()
+        if self.dashboard_controller.current_budget_id == budget_id:
+            self.dashboard_controller.update_expense_breakdown(budget_id)
 
     def on_category_changed(self, category):
         self.transaction_controller.current_page = 1  # Reset to first page when filter changes

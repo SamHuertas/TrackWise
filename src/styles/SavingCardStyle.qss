@@ -28,15 +28,36 @@ QProgressBar::chunk {
     border-radius: 3px;
 }
 
-#DeleteB, #EditB {
+#DeleteB {
     background-color: #f3f4f6;
     border-radius: 6px;
     font-size: 18px;
 }
 
+#DeleteB:hover {
+    background-color: #e5e7eb;
+    color: #1f2937;
+}
+
+#DeleteB:pressed {
+    background-color: #d1d5db;
+    color: #111827;
+}
+
 #DepositB {
     background-color: #dcfce7;
+    color: #3EB56A;
     padding: 8px 10px;
     border-radius: 6px;
     font-size: 14px;
+}
+
+#DepositB:hover {
+    background-color: #bbf7d0;
+    color: #15803d;
+}
+
+#DepositB:pressed {
+    background-color: #a7f3d0;
+    color: #047a2f;
 }

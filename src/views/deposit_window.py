@@ -83,9 +83,24 @@ class DepositWindow(QDialog):
                     QMessageBox.warning(
                         self, 
                         "Invalid Amount", 
-                        f"Amount exceeds remaining balance (₱{remaining_balance:.2f})"
+                        f"Amount exceeds remaining budget (₱{remaining_balance:.2f})"
                     )
                     return
+
+            # --- New savings goal remaining amount check ---
+            savings_goal_summary = self.savings_model.get_savings_summary(self.savings_id)
+            if savings_goal_summary:
+                goal_amount = savings_goal_summary['Goal Amount']
+                total_deposits = savings_goal_summary['TotalDeposits']
+                remaining_to_goal = goal_amount - total_deposits
+                
+                if amount > remaining_to_goal:
+                     QMessageBox.warning(
+                        self, 
+                        "Invalid Amount", 
+                        f"Amount exceeds remaining amount for goal (₱{remaining_to_goal:.2f})"
+                    )
+                     return
 
             # Add deposit to savings with current date
             current_date = QDate.currentDate().toString(Qt.DateFormat.ISODate)

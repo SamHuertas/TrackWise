@@ -21,8 +21,26 @@ QPushButton {
     background-color: white;
 }
 
+#CancelButton:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+}
+
+#CancelButton:pressed {
+    background-color: #f3f4f6;
+    border-color: #6b7280;
+}
+
 #SaveGoal {
     border: none;
     background-color: #4f46e5;
     color: white;
+}
+
+#SaveGoal:hover {
+    background-color: #4338CA;
+}
+
+#SaveGoal:pressed {
+    background-color: #3730A3;
 }

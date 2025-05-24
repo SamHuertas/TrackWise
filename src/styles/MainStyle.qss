@@ -69,6 +69,16 @@ QProgressBar::chunk {
     border: 1px solid #6C6F73;
 }
 
+#AddTransaction:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+}
+
+#AddTransaction:pressed {
+    background-color: #f3f4f6;
+    border-color: #6b7280;
+}
+
 #HomeButton, #TransactionButton, #SavingButton, #MonthlyBudgetsButton {
     border-radius: 10px;
     background-color: #4F46E5;
@@ -79,28 +89,25 @@ QProgressBar::chunk {
     background-color: #4338CA;
 }
 
-#NewTransaction, #NewGoalButton, #AddBudgetButton {
-    color: white;
-    background-color: #4F46E5;
-    border: none;
-    border-radius: 5px;
-}
-
 #TransactionDate, #CategoriesSelect, #BudgetDateEdit, #Month {
     border-radius: 5px;
     border: 1px solid #6C6F73;
     color: #6C6F73;
 }
 
-#FilterButton {
+#NewTransaction, #NewGoalButton, #AddBudgetButton, #FilterButton {
     background-color: #4F46E5;
     color: white;
     border: none;
     border-radius: 5px;
 }
 
-#FilterButton:hover {
+#NewTransaction:hover, #NewGoalButton:hover, #AddBudgetButton:hover, #FilterButton:hover {
     background-color: #4338CA;
+}
+
+#NewTransaction:pressed, #NewGoalButton:pressed, #AddBudgetButton:pressed, #FilterButton:pressed {
+    background-color: #3730A3;
 }
 
 QCalendarWidget QWidget {

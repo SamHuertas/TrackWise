@@ -64,6 +64,7 @@ class TransactionWindow(QDialog):
         # Update transaction list first and close window
         self.main_window.transaction_controller.load_transactions()
         self.main_window.dashboard_controller.refresh_dashboard()
+        self.main_window.dashboard_controller.refresh_pie_chart()
         self.accept()
         self.main_window.budget_controller.load_budget_data()
 

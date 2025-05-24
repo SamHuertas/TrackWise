@@ -187,6 +187,7 @@ class TransactionManagementController(QWidget):
                 self.main_window.dashboard_controller.refresh_dashboard()
                 self.main_window.budget_controller.load_budget_data()
                 self.main_window.dashboard_controller.load_recent_transactions()
+                self.main_window.dashboard_controller.refresh_pie_chart()
 
     def edit_transaction(self, transaction_id):
         transaction = self.expense_model.get_expense(transaction_id)
@@ -199,6 +200,7 @@ class TransactionManagementController(QWidget):
             self.main_window.dashboard_controller.refresh_dashboard()
             self.main_window.budget_controller.load_budget_data()
             self.main_window.dashboard_controller.load_recent_transactions()
+            self.main_window.dashboard_controller.refresh_pie_chart()
 
     def on_date_changed(self, date):
         self.current_page = 1  

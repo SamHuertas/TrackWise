@@ -60,7 +60,7 @@ class ExpenseModel:
         return self.db.fetchall("SELECT * FROM Expenses ORDER BY ExpensesID DESC LIMIT 5")
     
     def get_expenses_by_budget(self, budget_id: int):
-        """Get all expenses for a specific budget grouped by category"""
+        # Get all expenses of the month grouped by category
         return self.db.fetchall("""
             SELECT Category, SUM(Amount) as Amount 
             FROM Expenses 
@@ -70,7 +70,7 @@ class ExpenseModel:
         """, (budget_id,))
     
     def get_expenses_by_budget_this_week(self, budget_id: int):
-        """Get expenses for current week grouped by category for a specific budget"""
+        # Get expenses for current week grouped by category 
         return self.db.fetchall("""
             SELECT Category, SUM(Amount) as Amount 
             FROM Expenses 
@@ -80,7 +80,7 @@ class ExpenseModel:
         """, (budget_id,))
 
     def get_expenses_by_budget_today(self, budget_id: int):
-        """Get expenses for current day grouped by category for a specific budget"""
+        #Get expenses for current day grouped by category
         return self.db.fetchall("""
             SELECT Category, SUM(Amount) as Amount 
             FROM Expenses 

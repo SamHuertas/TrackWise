@@ -10,6 +10,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtWidgets import QGraphicsDropShadowEffect
 from PyQt6.QtGui import QColor
 from pathlib import Path
+from src.views.widgets.donut_chart import DonutChart
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -388,8 +389,8 @@ class Ui_MainWindow(object):
         self.MonthSelect.addItem("")
         self.horizontalLayout_8.addWidget(self.MonthSelect)
         self.verticalLayout_7.addLayout(self.horizontalLayout_8)
-        spacerItem7 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
-        self.verticalLayout_7.addItem(spacerItem7)
+        self.donut_chart = DonutChart()
+        self.verticalLayout_7.insertWidget(1, self.donut_chart)
         self.horizontalLayout_7.addWidget(self.ExpenseBreakdownFrame)
         self.RecentTransactionFrame = QtWidgets.QWidget(parent=self.HomePage)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)

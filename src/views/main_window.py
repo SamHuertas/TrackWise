@@ -1,4 +1,5 @@
 from PyQt6.QtWidgets import QMainWindow
+from PyQt6 import QtWidgets
 from src.ui.main_window_ui import Ui_MainWindow as MainWindowUI
 from src.utils.sidebar_utils import SidebarManager
 
@@ -14,6 +15,8 @@ from src.models.savings_model import SavingsModel
 from src.views.transaction_window import TransactionWindow
 from src.views.saving_window import SavingWindow
 
+from src.views.widgets.donut_chart import DonutChart
+
 class MainWindow(QMainWindow, MainWindowUI):
     def __init__(self):
         super().__init__()
@@ -28,6 +31,15 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.setup_sidebar()
         self.setup_connections()
         self.center_window()
+        self.setup_donut_chart()
+
+    def setup_donut_chart(self):
+        # Remove the spacer item in ExpenseBreakdownFrame
+        for i in reversed(range(self.verticalLayout_7.count())):
+            item = self.verticalLayout_7.itemAt(i)
+            if isinstance(item, QtWidgets.QSpacerItem):
+                self.verticalLayout_7.removeItem(item)
+                break
 
     def setup_sidebar(self):
         buttons = [self.HomeButton, self.MonthlyBudgetsButton, self.TransactionButton, self.SavingButton]
@@ -57,6 +69,25 @@ class MainWindow(QMainWindow, MainWindowUI):
 
     def open_saving_window(self):
         self.saving_window = SavingWindow(self)
+        self.saving_window.exec()
+    
+    def handle_transaction_deleted(self, budget_id):
+        # Force immediate refresh of all components
+        self.dashboard_controller.refresh_dashboard()
+        self.budget_controller.load_budget_data()
+        self.transaction_controller.load_transactions()
+        self.dashboard_controller.load_recent_transactions()
+        if self.dashboard_controller.current_budget_id == budget_id:
+            self.dashboard_controller.update_expense_breakdown(budget_id)
+
+    def handle_expense_added(self, budget_id):
+        # Force immediate refresh of all components
+        self.dashboard_controller.refresh_dashboard()
+        self.budget_controller.load_budget_data()
+        self.transaction_controller.load_transactions()
+        self.dashboard_controller.load_recent_transactions()
+        if self.dashboard_controller.current_budget_id == budget_id:
+            self.dashboard_controller.update_expense_breakdown(budget_id)
         self.saving_window.exec()
 
     def on_category_changed(self, category):

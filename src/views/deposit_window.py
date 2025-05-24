@@ -1,27 +1,25 @@
 from PyQt6.QtWidgets import QDialog, QMessageBox
-from PyQt6.QtCore import Qt, QDate, pyqtSignal
+from PyQt6.QtCore import Qt, QDate
 from src.ui.deposit_dialog_ui import Ui_DepositWindow
-from src.models.savings_model import SavingsModel
-from src.models.monthly_budget_model import MonthlyBudgetModel
 from datetime import datetime
 
 
 class DepositWindow(QDialog):
-    deposit_added = pyqtSignal()  # New signal for deposit success
-    
     def __init__(self, main_window, savings_id=None):
         super().__init__()
         self.ui = Ui_DepositWindow()
         self.setWindowTitle("Deposit to Savings Goal")
         self.setModal(True)
         self.ui.setupUi(self)
-        self.savings_model = SavingsModel()
-        self.budget_model = MonthlyBudgetModel()
+        
+        self.savings_model = main_window.savings_model
+        self.budget_model = main_window.budget_model
         self.main_window = main_window
         self.savings_id = savings_id
+        
+        self.setup_connections()
         self.setup_header()
         self.setup_combobox_and_remaining_balance()
-        self.setup_connections()
 
     def setup_connections(self):
         self.ui.DepositButton.clicked.connect(self.handle_deposit)
@@ -34,6 +32,7 @@ class DepositWindow(QDialog):
         self.ui.MonthlyBudgetInput.clear()
         self.budgets = self.budget_model.get_all_budget_summary()
         
+        # Add items to combobox
         for budget in self.budgets:
             month_num = int(budget['Month'])
             year = int(budget['Year'])
@@ -52,7 +51,7 @@ class DepositWindow(QDialog):
         if index >= 0:
             self.ui.MonthlyBudgetInput.setCurrentIndex(index)
         elif self.ui.MonthlyBudgetInput.count() > 0:
-            self.ui.MonthlyBudgetInput.setCurrentIndex(0)  # Default to first item if current month not found
+            self.ui.MonthlyBudgetInput.setCurrentIndex(0)
 
         # Trigger initial remaining balance update
         if self.ui.MonthlyBudgetInput.count() > 0:
@@ -91,8 +90,10 @@ class DepositWindow(QDialog):
             # Add deposit to savings with current date
             current_date = QDate.currentDate().toString(Qt.DateFormat.ISODate)
             self.savings_model.add_deposit(budget_id, self.savings_id, current_date, amount)
-            self.deposit_added.emit()  # Emit deposit signal
-            self.accept()  # Close window after successful deposit
+            self.main_window.savings_controller.load_savings_goals()
+            self.main_window.dashboard_controller.refresh_dashboard()
+            self.main_window.budget_controller.load_budget_data()
+            self.accept()
             
         except ValueError:
             QMessageBox.warning(self, "Invalid Input", "Please enter a valid amount")

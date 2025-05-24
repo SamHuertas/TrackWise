@@ -1,5 +1,5 @@
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import QFrame, QGridLayout, QLabel, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy, QProgressBar, QWidget, QVBoxLayout
+from PyQt6.QtWidgets import QFrame, QGridLayout, QLabel, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy, QProgressBar
 from PyQt6.QtGui import QFont, QIcon
 from PyQt6.QtCore import Qt, pyqtSignal
 from pathlib import Path

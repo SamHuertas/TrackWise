@@ -1,6 +1,5 @@
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy
-from PyQt6.QtCore import pyqtSignal, Qt
-from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import pyqtSignal
 from PyQt6 import QtGui, QtCore
 from pathlib import Path
 

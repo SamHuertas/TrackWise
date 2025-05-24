@@ -1,14 +1,11 @@
 from PyQt6 import QtWidgets, QtCore, QtGui
-from PyQt6.QtCore import Qt, QDate, pyqtSignal
+from PyQt6.QtCore import Qt, QDate
 from PyQt6.QtWidgets import QWidget, QTableWidgetItem, QMessageBox
 from src.views.widgets.transaction_action_buttons import TransactionActionButtons
 from src.views.edit_transaction_window import EditTransactionWindow
 import math
 
 class TransactionManagementController(QWidget):
-    transaction_deleted = pyqtSignal(int)  # Signal emitted when a transaction is deleted
-    transaction_edited = pyqtSignal(int)  # Signal emitted when a transaction is edited
-
     def __init__(self, main_window, expense_model):
         super().__init__()
         self.main_window = main_window
@@ -67,14 +64,11 @@ class TransactionManagementController(QWidget):
         return (year, month, day)
 
     def filter_by_category(self, transactions):
-        # Get filter parameters
         category = self.main_window.CategoriesSelect.currentText()
-        
-        # If no category is selected, default to "All Categories"
+
         if not category:
             category = "All Categories"
 
-        # Apply filters
         filtered_transactions = []
         for transaction in transactions:
             if category == "All Categories" or category == transaction['Category']:
@@ -101,46 +95,36 @@ class TransactionManagementController(QWidget):
         return filtered_transactions
 
     def load_transactions(self):
-        print("Loading transactions...")  # Debug print
         table = self.main_window.TransactionTable
-        table.clearContents()  # Clear the table contents
-        table.setRowCount(0)  # Reset row count
+        table.clearContents()
+        table.setRowCount(0)
 
-        # Re-fetch transactions from the database to ensure the latest data is loaded
-        self.expense_model.db.connection.commit()  # Ensure database changes are committed
+        # Get transactions and apply filters
         transactions = self.expense_model.get_all_transactions()
-        print(f"Found {len(transactions)} transactions")  # Debug print
-        
         if not transactions:
-            print("No transactions found")  # Debug print
             return
         
-        # Apply both filters
-        filtered_transactions1 = self.filter_by_category(transactions)
-        filtered_transactions = self.filter_by_date(filtered_transactions1)
+        # Apply filters and sort
+        filtered_transactions = self.filter_by_date(self.filter_by_category(transactions))
         filtered_transactions.sort(key=self.sort_by_date)
         
-        # Calculate pagination using filtered transactions
+        # Calculate pagination
         total_items = len(filtered_transactions)
         total_pages = math.ceil(total_items / self.items_per_page)
         start_idx = (self.current_page - 1) * self.items_per_page
         end_idx = min(start_idx + self.items_per_page, total_items)
         
-        # Update page indicator
+        # Update page info
         self.main_window.ItemIndic.setText(f"Showing {start_idx + 1}-{end_idx} of {total_items} transactions")
         self.main_window.Page.setText(f"Page {self.current_page}")
-        
-        # Enable/disable pagination buttons
         self.main_window.PrevPage.setEnabled(self.current_page > 1)
         self.main_window.NextPage.setEnabled(self.current_page < total_pages)
         
-        # Display transactions for current page
+        # Display current page
+        table.setRowCount(end_idx - start_idx)
         for row, transaction in enumerate(filtered_transactions[start_idx:end_idx]):
-            table.insertRow(row)
-            
             # Date
-            transaction_date = QDate.fromString(str(transaction['Date']), Qt.DateFormat.ISODate)
-            date_str = transaction_date.toString("MMM dd, yyyy")
+            date_str = QDate.fromString(str(transaction['Date']), Qt.DateFormat.ISODate).toString("MMM dd, yyyy")
             date_item = QTableWidgetItem(date_str)
             date_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             date_item.setForeground(QtGui.QColor("#333333"))
@@ -149,8 +133,7 @@ class TransactionManagementController(QWidget):
             # Category
             category_item = QTableWidgetItem(transaction['Category'])
             category_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            category_color = self.category_color_mapping().get(transaction['Category'], "#9E9E9E")
-            category_item.setForeground(QtGui.QColor(category_color))
+            category_item.setForeground(QtGui.QColor(self.category_color_mapping().get(transaction['Category'], "#9E9E9E")))
             table.setItem(row, 1, category_item)
             
             # Description
@@ -162,7 +145,7 @@ class TransactionManagementController(QWidget):
             # Amount
             amount_item = QTableWidgetItem(f"-₱{transaction['Amount']:.2f}")
             amount_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            amount_item.setForeground(QtGui.QColor("#f44336"))  # Red color for expenses
+            amount_item.setForeground(QtGui.QColor("#f44336"))
             table.setItem(row, 3, amount_item)
             
             # Actions
@@ -170,8 +153,6 @@ class TransactionManagementController(QWidget):
             action_buttons.delete_transaction_requested.connect(self.delete_transaction)
             action_buttons.edit_transaction_requested.connect(self.edit_transaction)
             table.setCellWidget(row, 4, action_buttons)
-        
-        print("Transactions loaded successfully")  # Debug print
 
     def previous_page(self):
         if self.current_page > 1:
@@ -200,34 +181,31 @@ class TransactionManagementController(QWidget):
             if transaction:
                 budget_id = transaction['BudgetID']
                 self.expense_model.delete_expense(transaction_id)
-                self.expense_model.db.connection.commit()  # Ensure changes are committed
                 
-                # Refresh all components
                 self.load_transactions()
+                
                 self.main_window.dashboard_controller.refresh_dashboard()
                 self.main_window.budget_controller.load_budget_data()
-                
-                # Emit signal for any other components that need to know
-                self.transaction_deleted.emit(budget_id)
+                self.main_window.dashboard_controller.load_recent_transactions()
 
     def edit_transaction(self, transaction_id):
         transaction = self.expense_model.get_expense(transaction_id)
         edit_window = EditTransactionWindow(self.main_window, transaction)
         edit_window.exec()
         if edit_window.result() == QtWidgets.QDialog.DialogCode.Accepted:
-            # Refresh all components after editing
             self.load_transactions()
+            
+            # Update dashboard and budget data
             self.main_window.dashboard_controller.refresh_dashboard()
             self.main_window.budget_controller.load_budget_data()
-            self.transaction_edited.emit(transaction['BudgetID']) 
-
+            self.main_window.dashboard_controller.load_recent_transactions()
 
     def on_date_changed(self, date):
-        self.current_page = 1  # Reset to first page when date changes
+        self.current_page = 1  
         self.load_transactions()
 
     def on_filter_clicked(self):
-        self.current_page = 1  # Reset to first page when filter is clicked
+        self.current_page = 1  
         self.load_transactions()
         self.main_window.CategoriesSelect.setCurrentIndex(-1)
         self.main_window.TransactionDate.setDate(self.main_window.TransactionDate.minimumDate())

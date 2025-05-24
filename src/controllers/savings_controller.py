@@ -1,15 +1,8 @@
-from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import QMessageBox, QWidget
-from src.models.savings_model import SavingsModel
 from src.views.widgets.savings_card import SavingsGoalWidget
 from src.views.deposit_window import DepositWindow
-from datetime import date
 
 class SavingsController(QWidget):
-    savings_updated = pyqtSignal()
-    deposit_added = pyqtSignal(int)  # Emits savings_id when deposit is added
-    savings_deleted = pyqtSignal(int)  # Emits savings_id when deleted
-
     def __init__(self, main_window, savings_model):
         super().__init__()
         self.main_window = main_window
@@ -25,17 +18,17 @@ class SavingsController(QWidget):
         return sorted(savings_goals, key=get_progress, reverse=True)
 
     def load_savings_goals(self):
-        self.savings_model.db.connection.commit()
-        # Clear existing widgets
+        # Get all savings goals
+        savings_goals = self.savings_model.get_all_savings_summaries()
+        savings_goals = self.sort_savings_by_progress(savings_goals)
+        
         layout = self.main_window.SavingsItems.layout()
+        
+        # Clear existing widgets 
         while layout.count():
             item = layout.takeAt(0)
             if item.widget():
                 item.widget().deleteLater()
-
-        # Get all savings goals
-        savings_goals = self.savings_model.get_all_savings_summaries()
-        savings_goals = self.sort_savings_by_progress(savings_goals)
         
         # Create and add savings cards
         for goal in savings_goals:
@@ -44,19 +37,14 @@ class SavingsController(QWidget):
             savings_card.deposit_requested.connect(self.show_deposit_window)
             savings_card.delete_requested.connect(self.delete_savings)
             layout.addWidget(savings_card)
+            
+        # Add stretch at the end
         layout.addStretch()
         self.update_total_savings()
 
     def show_deposit_window(self, savings_id):
         deposit_window = DepositWindow(self.main_window, savings_id)
-        deposit_window.deposit_added.connect(self.load_savings_goals)
-        deposit_window.deposit_added.connect(self.main_window.handle_deposit_added)  # Connect to refresh handler
         deposit_window.exec()
-
-    def on_deposit_added(self):
-        self.load_savings_goals()
-        self.main_window.dashboard_controller.refresh_dashboard()
-        self.update_total_savings()
 
     def update_total_savings(self):
         total_savings = self.savings_model.sum_of_all_deposits()
@@ -64,14 +52,10 @@ class SavingsController(QWidget):
         self.main_window.AccumSavings.setText(f"₱{amount:.2f}")
 
     def delete_savings(self, savings_id):
-        # Confirm deletion
         reply = QMessageBox.question(self, 'Delete Savings Goal', 'Are you sure you want to delete this savings goal?',
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         if reply == QMessageBox.StandardButton.Yes:
             self.savings_model.delete_savings_goal(savings_id)
-            self.main_window.savings_controller.load_savings_goals()
-            self.main_window.dashboard_controller.load_top_savings_goals()
+            self.load_savings_goals()  
             self.main_window.dashboard_controller.refresh_dashboard()
-            self.main_window.budget_controller.load_budget_data()
-            self.update_total_savings()
-            self.savings_deleted.emit(savings_id)
+            self.main_window.budget_controller.load_budget_data()  

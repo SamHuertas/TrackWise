@@ -46,7 +46,6 @@ class BudgetActionButtons(QWidget):
         layout.addItem(rightspacer)
 
         self.setLayout(layout)
-
     def on_delete_clicked(self):
         self.delete_budget_requested.emit(self.budget_id)
 

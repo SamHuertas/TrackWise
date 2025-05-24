@@ -1,6 +1,9 @@
 from PyQt6.QtCore import QDate
 from datetime import datetime
 from src.views.widgets.transaction_card import TransactionCard
+from src.views.widgets.dashboard_savings_card import DashboardSavingsCard
+from PyQt6.QtWidgets import QLabel
+from PyQt6.QtCore import Qt
 
 class DashboardController:
     def __init__(self, main_window, budget_model, savings_model, expense_model):
@@ -14,61 +17,46 @@ class DashboardController:
         self.load_top_savings_goals()
 
     def setup_month_combobox(self):
-        # Initialize the month combobox with months that have budgets.
-        print("Setting up month combobox...")
-        current_text = self.main_window.Month.currentText() if self.main_window.Month.count() > 0 else None
-        budgets = self.budget_model.get_all_budget_summary()
-        print(f"Found {len(budgets) if budgets else 0} budgets")
-        
+        budgets = list(self.budget_model.get_all_budget_summary())
         self.main_window.Month.clear()
         
+        if not budgets:
+            self.main_window.Month.addItem("No Budget Available")
+            self.update_dashboard(None)
+            return
+            
         for budget in budgets:
             month_num = int(budget['Month'])
             year = int(budget['Year'])
             month_name = QDate.fromString(str(month_num), 'M').toString('MMMM')
             self.main_window.Month.addItem(f"{month_name} {year}", budget['BudgetID'])
         
-        # Try to restore previous selection
-        if current_text:
-            index = self.main_window.Month.findText(current_text)
-            if index >= 0:
-                self.main_window.Month.setCurrentIndex(index)
-                print(f"Restored previous selection: {current_text}")
-                return
-        
-        # If no previous selection or it wasn't found, set to current month
+        # Set to current month if available, otherwise first item
         current_date = datetime.now()
         current_month_year = f"{current_date.strftime('%B')} {current_date.year}"
         
-        # Find index of current month/year in combobox
         index = self.main_window.Month.findText(current_month_year)
-        if index >= 0:
-            self.main_window.Month.setCurrentIndex(index)
-            print(f"Set to current month: {current_month_year}")
-        elif self.main_window.Month.count() > 0:
-            self.main_window.Month.setCurrentIndex(0)
-            print("Set to first available month")
-        
-        # Update display
-        if self.main_window.Month.count() > 0:
-            self.update_dashboard(self.main_window.Month.currentData())
-            print("Updated dashboard display")
+        self.main_window.Month.setCurrentIndex(index if index >= 0 else 0)
+        self.update_dashboard(self.main_window.Month.currentData())
 
     def setup_connections(self):
         self.main_window.Month.currentIndexChanged.connect(self.on_month_changed)
 
     def on_month_changed(self, index):
-        if index >= 0:
-            budget_id = self.main_window.Month.itemData(index)
-            self.update_dashboard(budget_id)
+        budget_id = self.main_window.Month.itemData(index)
+        self.update_dashboard(budget_id)
 
     def update_dashboard(self, budget_id):
-        self.budget_model.db.connection.commit()
-        budget_summary = self.budget_model.get_budget_summary(budget_id)
+        # Get total savings regardless of budget
         total_savings = self.savings_model.sum_of_all_deposits()
         total_amount = total_savings['total'] if total_savings else 0
         self.main_window.Money3.setText(f"₱{total_amount:.2f}")
 
+        if not budget_id:
+            self.reset_dashboard_display()
+            return
+            
+        budget_summary = self.budget_model.get_budget_summary(budget_id)
         if budget_summary:
             self.main_window.Money.setText(f"₱{budget_summary['BudgetAmount']:.2f}")
             self.main_window.Money2.setText(f"₱{budget_summary['TotalExpenses']:.2f}")
@@ -78,22 +66,43 @@ class DashboardController:
             self.main_window.PercentageUsed.setText(f"{percentage:.0f}% of monthly budget")
             
             savings = budget_summary['TotalDeposits']
-
-            if savings > 0:
-                self.main_window.Tally.setText(f"+₱{savings:.2f} this month")
-            else:
-                self.main_window.Tally.setText("No deposits this month")
+            self.main_window.Tally.setText(f"+₱{savings:.2f} this month" if savings > 0 else "No deposits this month")
         else:
-            self.main_window.Money.setText("₱0.00")
-            self.main_window.Money2.setText("₱0.00")
-            self.main_window.progressBar.setValue(0)
-            self.main_window.PercentageUsed.setText("0% of monthly budget")
-            self.main_window.Tally.setText("₱0.00")
+            self.reset_dashboard_display()
+    
+    def reset_dashboard_display(self):
+        self.main_window.Money.setText("₱0.00")
+        self.main_window.Money2.setText("₱0.00")
+        self.main_window.progressBar.setValue(0)
+        self.main_window.PercentageUsed.setText("0% of monthly budget")
+        self.main_window.Tally.setText("No budget available")
         
     def refresh_dashboard(self):
         if self.main_window.Month.count() > 0:
             current_budget_id = self.main_window.Month.currentData()
-            self.update_dashboard(current_budget_id)
+            if current_budget_id:
+                budget_summary = self.budget_model.get_budget_summary(current_budget_id)
+                if budget_summary:
+                    # Update budget info
+                    self.main_window.Money.setText(f"₱{budget_summary['BudgetAmount']:.2f}")
+                    self.main_window.Money2.setText(f"₱{budget_summary['TotalExpenses']:.2f}")
+                    
+                    # Update progress
+                    percentage = (budget_summary['TotalExpenses'] / budget_summary['BudgetAmount']) * 100
+                    self.main_window.progressBar.setValue(int(percentage))
+                    self.main_window.PercentageUsed.setText(f"{percentage:.0f}% of monthly budget")
+                    
+                    # Update savings
+                    savings = budget_summary['TotalDeposits']
+                    self.main_window.Tally.setText(f"+₱{savings:.2f} this month" if savings > 0 else "No deposits this month")
+                    
+                    # Update total savings
+                    total_savings = self.savings_model.sum_of_all_deposits()
+                    total_amount = total_savings['total'] if total_savings else 0
+                    self.main_window.Money3.setText(f"₱{total_amount:.2f}")
+                    
+                    # Update recent transactions
+                    self.load_recent_transactions()
         self.load_top_savings_goals()
     
     def load_recent_transactions(self):
@@ -107,11 +116,18 @@ class DashboardController:
 
         # Get the top 5 most recent transactions
         top5 = self.expense_model.get_top5_expenses()
+        
+        if not top5:
+            message = QLabel("No recent transactions")
+            message.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            layout.addWidget(message)
+            return
 
         for transaction in top5:
             transaction_card = TransactionCard()
             transaction_card.update_data(transaction) 
             layout.addWidget(transaction_card)
+        layout.addStretch(1)
 
     def load_top_savings_goals(self):
         # Clear existing widgets
@@ -123,6 +139,11 @@ class DashboardController:
 
         # Get all savings goals
         savings_goals = self.savings_model.get_all_savings_summaries()
+        if not savings_goals:
+            message = QLabel("No savings")
+            message.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            layout.addWidget(message)
+            return
 
         # Sort savings goals by completion percentage
         def get_progress(goal):
@@ -135,8 +156,6 @@ class DashboardController:
         # Get the top 3 goals
         top_3_goals = sorted_goals[:3]
 
-        # Create and add DashboardSavingsCard for top 3 goals
-        from src.views.widgets.dashboard_savings_card import DashboardSavingsCard
         for goal in top_3_goals:
             savings_card = DashboardSavingsCard()
             savings_card.update_data(goal)

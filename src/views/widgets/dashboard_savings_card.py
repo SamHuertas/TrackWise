@@ -7,12 +7,7 @@ class DashboardSavingsCard(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("DashboardSavingsCard")
-        # Use a separate style file for savings card, or reuse TransactionCardStyle.qss for demo
-        style_path = Path("src/styles/DashboardSavingsCardStyle.qss")
-        if style_path.exists():
-            self.setStyleSheet(style_path.read_text())
-        else:
-            self.setStyleSheet(Path("src/styles/TransactionCardStyle.qss").read_text())
+        self.setStyleSheet(Path("src/styles/DashboardSavingsCardStyle.qss").read_text())
 
         main_layout = QHBoxLayout(self)
         main_layout.setContentsMargins(8, 4, 8, 4)

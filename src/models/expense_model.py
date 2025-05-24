@@ -7,8 +7,7 @@ class ExpenseModel:
 
     def add_expense(self, budget_id: int, amount: float, category: str, description: str, date: date):
         # Add a new expense entry to the database
-        if amount <0:
-            return False
+
         self.db.execute( "INSERT INTO Expenses (BudgetID, Amount, Category, Description, Date) VALUES (%s, %s, %s, %s, %s)",(budget_id, amount, category, description, date))
 
     def delete_expense(self, expense_id: int):

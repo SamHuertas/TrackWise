@@ -66,9 +66,56 @@ class DashboardController:
             self.main_window.PercentageUsed.setText(f"{percentage:.0f}% of monthly budget")
             
             savings = budget_summary['TotalDeposits']
+            self.update_expense_breakdown(budget_id)
+
             self.main_window.Tally.setText(f"+₱{savings:.2f} this month" if savings > 0 else "No deposits this month")
         else:
             self.reset_dashboard_display()
+    
+    def update_expense_breakdown(self, budget_id):
+        """Fetch expense breakdown by category and update the donut chart based on current period selection"""
+        # Get current selection from MonthSelect dropdown
+        current_index = self.main_window.MonthSelect.currentIndex()
+        period_map = {
+            0: "month",  # This Month
+            1: "week",   # This Week  
+            2: "day"     # This Day
+        }
+        
+        period = period_map.get(current_index, "month")
+        self.update_expense_breakdown_by_period(budget_id, period)
+
+    def update_expense_breakdown_by_period(self, budget_id, period="month"):
+        """Update expense breakdown based on selected time period"""
+        if period == "week":
+            expenses = self.expense_model.get_expenses_by_budget_this_week(budget_id)
+        elif period == "day":
+            expenses = self.expense_model.get_expenses_by_budget_today(budget_id)
+        else:  # Default to month
+            expenses = self.expense_model.get_expenses_by_budget(budget_id)
+        
+        category_totals = {}
+        for expense in expenses:
+            category = expense['Category']
+            amount = expense['Amount']
+            category_totals[category] = category_totals.get(category, 0) + amount
+            
+        self.main_window.donut_chart.set_data(category_totals)
+
+    def on_expense_period_changed(self, index):
+        """Handle changes to the expense breakdown period dropdown"""
+        if self.current_budget_id is None:
+            return
+            
+        period_map = {
+            0: "month",  # This Month
+            1: "week",   # This Week  
+            2: "day"     # This Day
+        }
+        
+        period = period_map.get(index, "month")
+        self.update_expense_breakdown_by_period(self.current_budget_id, period)
+        self.reset_dashboard_display()
     
     def reset_dashboard_display(self):
         self.main_window.Money.setText("₱0.00")

@@ -10,11 +10,11 @@ class DBManager:
         self.connection = pymysql.connect(
             charset="utf8mb4",
             cursorclass=DictCursor,
-            db=os.getenv("DB_NAME"),
-            host=os.getenv("DB_HOST"),
-            password=os.getenv("DB_PASSWORD"),
-            port=int(os.getenv("DB_PORT")),
-            user=os.getenv("DB_USER"),
+            db=os.getenv("DB_NAME", "defaultdb"),
+            host=os.getenv("DB_HOST", "financetrackerdb-samalexishuertas1025-9ffb.b.aivencloud.com"),
+            password=os.getenv("DB_PASSWORD", "AVNS_HakNwEO-ZzSCQu5U84o"),
+            port=int(os.getenv("DB_PORT", "22007")),
+            user=os.getenv("DB_USER", "avnadmin"),
             autocommit=True
         )
 

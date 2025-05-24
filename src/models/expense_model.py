@@ -58,3 +58,33 @@ class ExpenseModel:
     def get_top5_expenses(self):
         # Get the top 5 most recently added expenses by ordering by ExpensesID
         return self.db.fetchall("SELECT * FROM Expenses ORDER BY ExpensesID DESC LIMIT 5")
+    
+    def get_expenses_by_budget(self, budget_id: int):
+        """Get all expenses for a specific budget grouped by category"""
+        return self.db.fetchall("""
+            SELECT Category, SUM(Amount) as Amount 
+            FROM Expenses 
+            WHERE BudgetID = %s
+            GROUP BY Category
+            ORDER BY Amount DESC
+        """, (budget_id,))
+    
+    def get_expenses_by_budget_this_week(self, budget_id: int):
+        """Get expenses for current week grouped by category for a specific budget"""
+        return self.db.fetchall("""
+            SELECT Category, SUM(Amount) as Amount 
+            FROM Expenses 
+            WHERE BudgetID = %s AND YEARWEEK(Date, 1) = YEARWEEK(CURDATE(), 1)
+            GROUP BY Category
+            ORDER BY Amount DESC
+        """, (budget_id,))
+
+    def get_expenses_by_budget_today(self, budget_id: int):
+        """Get expenses for current day grouped by category for a specific budget"""
+        return self.db.fetchall("""
+            SELECT Category, SUM(Amount) as Amount 
+            FROM Expenses 
+            WHERE BudgetID = %s AND DATE(Date) = CURDATE()
+            GROUP BY Category
+            ORDER BY Amount DESC
+        """, (budget_id,))

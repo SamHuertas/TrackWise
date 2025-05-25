@@ -3,6 +3,7 @@ from PyQt6 import QtWidgets
 from src.ui.main_window_ui import Ui_MainWindow as MainWindowUI
 from src.utils.sidebar_utils import SidebarManager
 from src.views.widgets.donut_chart import DonutChart
+from datetime import datetime
 
 from src.controllers.monthly_budget_controller import MonthlyBudgetController
 from src.controllers.dashboard_controller import DashboardController
@@ -26,7 +27,10 @@ class MainWindow(QMainWindow, MainWindowUI):
         self.budget_controller = MonthlyBudgetController(self, self.budget_model)
         self.dashboard_controller = DashboardController(self, self.budget_model, self.savings_model, self.expense_model)
         self.transaction_controller = TransactionManagementController(self, self.expense_model)
-        self.savings_controller = SavingsController(self, self.savings_model)   
+        self.savings_controller = SavingsController(self, self.savings_model)
+        current_date = datetime.now()
+        formatted_date = current_date.strftime("%A, %B %d, %Y")
+        self.Date.setText(formatted_date)
         self.setup_sidebar()
         self.setup_connections()
         self.center_window()

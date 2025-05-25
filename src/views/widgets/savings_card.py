@@ -15,7 +15,7 @@ class SavingsGoalWidget(QFrame):
         
         # Create layout
         self.grid = QGridLayout(self)
-        self.grid.setContentsMargins(8, 8, 8, 8)
+        self.grid.setContentsMargins(4, 4, 4, 4)
         self.grid.setHorizontalSpacing(0)
         self.grid.setVerticalSpacing(3)
 

@@ -2,10 +2,10 @@
     background-color: white;
 }
 
-QLineEdit, QComboBox, QDateEdit {
-    border-radius: 5px;
-    border: 2px solid #e6e6e7;
-    padding: 3px;
+QLineEdit, QDateEdit {
+    border-radius: 6px;
+    border: 1px solid #e6e6e7;
+    padding: 6px 10px;
 }
 
 QPushButton {
@@ -43,4 +43,61 @@ QPushButton {
 
 #SaveButton:pressed {
     background-color: #3730A3;
+}
+
+QComboBox {
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #374151;
+    min-width: 100px;
+    min-height: 18px;
+}
+
+QComboBox:hover {
+    border-color: #a2a3a5;
+    outline: none;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: center right;
+    width: 20px;
+    border-left: none;
+    background: transparent;
+}
+
+QComboBox::down-arrow {
+    image: url(src/assets/down.png);
+    width: 10px;
+    height: 10px;
+}
+
+QComboBox::down-arrow:on {
+    image: url(src/assets/up.png);
+    width: 10px;
+    height: 10px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    selection-background-color: #F3F4F6;
+    outline: none;
+}
+
+QComboBox QAbstractItemView::item {
+    padding: 6px 10px;
+    color: #374151;
+}
+
+QComboBox QAbstractItemView::item:hover {
+    background-color: #F9FAFB;
+}
+
+QComboBox QAbstractItemView::item:selected {
+    background-color: #F3F4F6;
+    color: #4F46E5;
 }

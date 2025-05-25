@@ -113,7 +113,8 @@ class MonthlyBudgetController(QWidget):
         # Add the budget
         self.budgetmodel.add_budget(amount, month, year)
         self.load_budget_data()
-    
+        self.main_window.dashboard_controller.setup_month_combobox()
+
     def delete_budget(self, budget_id):
         reply = QMessageBox.question(
             self.main_window, 

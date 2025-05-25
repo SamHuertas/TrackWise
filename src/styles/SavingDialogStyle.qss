@@ -3,9 +3,9 @@
 }
 
 QLineEdit{
-    border-radius: 5px;
-    border: 2px solid #e6e6e7;
-    padding: 3px;
+    border-radius: 6px;
+    border: 1px solid #e6e6e7;
+    padding: 6px 10px;
 }
 
 QPushButton {

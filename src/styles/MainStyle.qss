@@ -50,12 +50,6 @@ QProgressBar::chunk {
     border-radius: 5px;
 }
 
-#MonthSelect, #CategoriesSelect {
-    background-color: white;
-    border: 1px solid white;
-    color: #6C6F73;
-}
-
 #ViewAll, #ViewAllSavings {
     background-color: white;
     color: #3B82F6;
@@ -89,7 +83,7 @@ QProgressBar::chunk {
     background-color: #4338CA;
 }
 
-#TransactionDate, #CategoriesSelect, #BudgetDateEdit, #Month {
+#BudgetDateEdit {
     border-radius: 5px;
     border: 1px solid #6C6F73;
     color: #6C6F73;
@@ -140,3 +134,270 @@ QHeaderView::section {
         font-size: 12px;
         font-weight: bold;
     }
+
+#TransactionList, #SavingsFrame, #SavingsList {
+    border: none;
+}
+
+#TransactionList > QWidget > QWidget {
+    background-color: white;
+}
+
+#SavingsFrame > QWidget > QWidget {
+    background-color: white;
+}
+
+#SavingsList > QWidget > QWidget {
+    background-color: white;
+}
+
+#CategoriesSelect{
+    padding: 3px 10px;
+}
+
+QComboBox {
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #374151;
+    min-width: 100px;
+    min-height: 18px;
+}
+
+QComboBox:hover {
+    border-color: #a2a3a5;
+    outline: none;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: center right;
+    width: 20px;
+    border-left: none;
+    background: transparent;
+}
+
+QComboBox::down-arrow {
+    image: url(src/assets/down.png);
+    width: 10px;
+    height: 10px;
+}
+
+QComboBox::down-arrow:on {
+    image: url(src/assets/up.png);
+    width: 10px;
+    height: 10px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    selection-background-color: #F3F4F6;
+    outline: none;
+}
+
+QComboBox QAbstractItemView::item {
+    padding: 6px 10px;
+    color: #374151;
+}
+
+QComboBox QAbstractItemView::item:hover {
+    background-color: #F9FAFB;
+}
+
+QComboBox QAbstractItemView::item:selected {
+    background-color: #F3F4F6;
+    color: #4F46E5;
+}
+
+QDateEdit {
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #374151;
+    min-width: 100px;
+    min-height: 18px;
+}
+
+QDateEdit:hover {
+    border-color: #a2a3a5;
+    outline: none;
+}
+
+QDateEdit::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: center right;
+    width: 20px;
+    border-left: none;
+    background: transparent;
+}
+
+QDateEdit::down-arrow {
+    image: url(src/assets/down.png);
+    width: 10px;
+    height: 10px;
+}
+
+QCalendarWidget QWidget {
+	background-color: #F9FAFB; 
+}
+
+QCalendarWidget {
+    min-width: 250px; /* Set minimum width */
+    max-width: 250px; /* Set maximum width */
+    min-height: 300px;
+    max-height: 300px;
+    /* Ensure no default background or border on the main widget */
+    background-color: transparent;
+    border: none;
+}
+
+QWidget#qt_calendar_navigationbar {
+	background-color: #F9FAFB;
+	border: 1px solid #E5E7EB; 
+	border-bottom: 0px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+    min-height: 40px;
+}
+
+#qt_calendar_prevmonth, #qt_calendar_nextmonth {
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 5px;
+    qproperty-icon: none;
+    min-width: 20px;
+    max-width: 20px;
+    min-height: 20px;
+    max-height: 20px;
+}
+
+#qt_calendar_prevmonth {
+    qproperty-icon: url(src/assets/calendar_left1.png);
+    qproperty-iconSize: 12px 12px;
+    margin-left: 10px;
+}
+
+#qt_calendar_nextmonth {
+    qproperty-icon: url(src/assets/calendar_right1.png);
+    qproperty-iconSize: 12px 12px;
+    margin-right: 10px;
+}
+
+#qt_calendar_prevmonth::pressed, #qt_calendar_nextmonth::pressed{
+    background-color: #dcdbdb;
+}
+
+#qt_calendar_yearbutton {
+    color: black;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 13px;
+    padding: 0px;
+    min-height: 20px;
+    max-height: 20px;
+}
+
+#qt_calendar_monthbutton {
+    color: black;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 0px;
+    margin: 5px 0;
+    min-height: 20px;
+    max-height: 20px;
+}
+
+#qt_calendar_yearedit {
+    min-width: 39px;
+    font-size: 13px;
+    color: black;
+    background: transparent;
+}
+
+#qt_calendar_yearedit::down-button {
+    image: url(src/assets/down.png);
+    subcontrol-position: left;
+    width: 10px;
+    height: 10px;
+}
+
+#qt_calendar_yearedit::up-button {
+    image: url(src/assets/up.png);
+    subcontrol-position: right;
+    width: 10px;
+    height: 10px;
+}
+
+#qt_calendar_calendarview{
+    border: 1px solid #E5E7EB; 
+    border-top: 1px solid #E5E7EB; /* Add a top border to separate from navigation bar */
+    border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+QCalendarWidget QAbstractItemView {
+    selection-background-color: transparent;
+    selection-color: black;
+    outline: none;
+}
+
+QCalendarWidget QAbstractItemView::item {
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    margin: 2px;
+    padding: 0px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: transparent;
+}
+
+QCalendarWidget QAbstractItemView::item:hover {
+    background-color: transparent;
+    border: 2px solid #4F46E5;
+    border-radius: 7px;
+}
+
+QCalendarWidget QAbstractItemView::item:selected {
+    background-color: #4F46E5;
+    border: 2px solid #4F46E5;
+    border-radius: 7px;
+}
+
+QCalendarWidget QAbstractItemView::item:selected:focus {
+    background-color: #4F46E5;
+    border: 2px solid #4F46E5;
+    border-radius: 7px;
+    color: white;
+}
+
+QCalendarWidget QMenu {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    color: #333333;
+}
+
+QCalendarWidget QMenu::item {
+    color: #374151;
+}
+
+QCalendarWidget QMenu::item:selected {
+    background-color: #F3F4F6;
+    color: #4F46E5;
+}
+
+QCalendarWidget QMenu::item:hover {
+    background-color: #F9FAFB;
+}
+
+QCalendarWidget QToolButton#qt_calendar_monthbutton::menu-indicator {
+    image: none;
+    width: 0;
+}

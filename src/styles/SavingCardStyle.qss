@@ -1,8 +1,8 @@
 QFrame {
-    border: 1.5px solid #e5e7eb;
+    border: 1px solid #e5e7eb;
     border-radius: 14px;
     background-color: white;
-    padding: 5px 5px 5px 5px;
+    padding: 2px 2px 2px 2px;
 }
 
  #NameL, #AmountL, #TargetL {

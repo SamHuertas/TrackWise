@@ -591,15 +591,38 @@ class Ui_MainWindow(object):
         self.StartMonth.setFont(font)
         self.StartMonth.setObjectName("StartMonth")
         self.verticalLayout_24.addWidget(self.StartMonth)
-        self.BudgetDateEdit = QtWidgets.QDateEdit(parent=self.InputDate)
-        self.BudgetDateEdit.setMinimumSize(QtCore.QSize(200, 30))
+        
+        # Create horizontal layout for month and year
+        self.dateInputLayout = QtWidgets.QHBoxLayout()
+        self.dateInputLayout.setContentsMargins(0, 0, 0, 0)
+        self.dateInputLayout.setSpacing(10)
+        
+        # Month ComboBox
+        self.MonthComboBox = QtWidgets.QComboBox(parent=self.InputDate)
+        self.MonthComboBox.setMinimumSize(QtCore.QSize(150, 30))
         font = QtGui.QFont()
         font.setPointSize(12)
-        self.BudgetDateEdit.setFont(font)
-        self.BudgetDateEdit.setButtonSymbols(QtWidgets.QAbstractSpinBox.ButtonSymbols.NoButtons)
-        self.BudgetDateEdit.setCalendarPopup(False)
-        self.BudgetDateEdit.setObjectName("BudgetDateEdit")
-        self.verticalLayout_24.addWidget(self.BudgetDateEdit)
+        self.MonthComboBox.setFont(font)
+        self.MonthComboBox.setObjectName("MonthComboBox")
+        # Add months
+        months = ["January", "February", "March", "April", "May", "June", 
+                 "July", "August", "September", "October", "November", "December"]
+        self.MonthComboBox.addItems(months)
+        self.dateInputLayout.addWidget(self.MonthComboBox)
+        
+        # Year SpinBox
+        self.YearSpinBox = QtWidgets.QSpinBox(parent=self.InputDate)
+        self.YearSpinBox.setMinimumSize(QtCore.QSize(100, 30))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.YearSpinBox.setFont(font)
+        self.YearSpinBox.setMinimum(2000)
+        self.YearSpinBox.setMaximum(2100)
+        self.YearSpinBox.setValue(QtCore.QDate.currentDate().year())
+        self.YearSpinBox.setObjectName("YearSpinBox")
+        self.dateInputLayout.addWidget(self.YearSpinBox)
+        
+        self.verticalLayout_24.addLayout(self.dateInputLayout)
         self.horizontalLayout_18.addWidget(self.InputDate)
         spacerItem10 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_18.addItem(spacerItem10)
@@ -932,7 +955,6 @@ class Ui_MainWindow(object):
         self.BudgetAmount.setText(_translate("MainWindow", "Budget Amount"))
         self.BudgetInput.setPlaceholderText(_translate("MainWindow", "0.00"))
         self.StartMonth.setText(_translate("MainWindow", "Start Month"))
-        self.BudgetDateEdit.setDisplayFormat(_translate("MainWindow", "MMMM yyyy"))
         self.AddBudgetButton.setText(_translate("MainWindow", "Add Budget"))
         self.YourBudgets.setText(_translate("MainWindow", "Your Monthly Budgets"))
         self.TransactionManagement.setText(_translate("MainWindow", "Transaction Management"))

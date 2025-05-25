@@ -10,8 +10,12 @@ class MonthlyBudgetController(QWidget):
         self.main_window = main_window
         self.budgetmodel = budget_model
         
+        # Set current month and year
+        current_date = QDate.currentDate()
+        self.main_window.MonthComboBox.setCurrentIndex(current_date.month() - 1)  # -1 because months are 0-based in combo box
+        self.main_window.YearSpinBox.setValue(current_date.year())
+        
         self.setup_table()
-        self.setup_calendar()
         self.load_budget_data()
 
     def setup_table(self):
@@ -31,10 +35,7 @@ class MonthlyBudgetController(QWidget):
         table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         table.setAlternatingRowColors(True)
 
-    def setup_calendar(self):
-        self.main_window.BudgetDateEdit.setCalendarPopup(False)
-        self.main_window.BudgetDateEdit.setDate(QtCore.QDate.currentDate())
-        self.main_window.BudgetDateEdit.setDisplayFormat("MMMM yyyy")
+
 
     def sort_by_date(self, budget):
         return (int(budget['Year']), int(budget['Month']))
@@ -94,8 +95,8 @@ class MonthlyBudgetController(QWidget):
             table.setCellWidget(row, 5, action_buttons)
 
     def input_budget(self):
-        month = self.main_window.BudgetDateEdit.date().month()
-        year = self.main_window.BudgetDateEdit.date().year()
+        month = self.main_window.MonthComboBox.currentIndex() + 1  # +1 because months are 1-based
+        year = self.main_window.YearSpinBox.value()
         amount = self.main_window.BudgetInput.text()
 
         try:
@@ -114,6 +115,7 @@ class MonthlyBudgetController(QWidget):
         self.budgetmodel.add_budget(amount, month, year)
         self.load_budget_data()
         self.main_window.dashboard_controller.setup_month_combobox()
+        self.main_window.BudgetInput.clear()
 
     def delete_budget(self, budget_id):
         reply = QMessageBox.question(

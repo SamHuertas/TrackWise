@@ -26,11 +26,9 @@ class MonthlyBudgetModel:
         deposits_count = len(self.db.fetchall("SELECT * FROM Deposits WHERE BudgetID = %s", (budget_id,)))
 
         if expenses_count > 0 or deposits_count > 0:
-            print("Cannot delete budget entry with associated expenses or deposits.")
             return False
 
         self.db.execute("DELETE FROM MonthlyBudget WHERE BudgetID = %s", (budget_id,))
-        print(f"Budget entry with ID {budget_id} deleted.")
         return True
 
     def budget_exists(self, month, year):

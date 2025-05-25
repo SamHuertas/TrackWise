@@ -52,6 +52,18 @@ class TransactionWindow(QDialog):
             QMessageBox.warning(self, "No Budget", f"No budget exists for {self.budget_model.get_month_name(month)} {year}")
             return
 
+        # Check if amount exceeds remaining budget
+        budget_summary = self.budget_model.get_budget_summary(budget['BudgetID'])
+        if budget_summary:
+            remaining = float(budget_summary['Remaining'])
+            if amount > remaining:
+                QMessageBox.warning(
+                    self,
+                    "Budget Exceeded",
+                    f"Amount exceeds remaining budget (₱{remaining:.2f})"
+                )
+                return
+
         # Add expense
         self.expense_model.add_expense(
             budget_id=budget['BudgetID'],

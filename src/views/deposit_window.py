@@ -102,9 +102,15 @@ class DepositWindow(QDialog):
                     )
                      return
 
-            # Add deposit to savings with current date
-            current_date = QDate.currentDate().toString(Qt.DateFormat.ISODate)
-            self.savings_model.add_deposit(budget_id, self.savings_id, current_date, amount)
+            # Get the date from the selected budget
+            selected_budget = self.budgets[self.ui.MonthlyBudgetInput.currentIndex()]
+            month = int(selected_budget['Month'])
+            year = int(selected_budget['Year'])
+            budget_date = QDate(year, month, 1)  # Use first day of the month
+            date_str = budget_date.toString(Qt.DateFormat.ISODate)
+            
+            # Add deposit to savings with the budget's date
+            self.savings_model.add_deposit(budget_id, self.savings_id, date_str, amount)
             self.main_window.savings_controller.load_savings_goals()
             self.main_window.dashboard_controller.refresh_dashboard()
             self.main_window.budget_controller.load_budget_data()

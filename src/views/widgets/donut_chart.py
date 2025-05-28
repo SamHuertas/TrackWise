@@ -6,7 +6,7 @@ from PyQt6.QtCore import Qt, QRectF
 class DonutChart(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setMinimumSize(400, 450)
+        self.setMinimumSize(300, 350)  # Reduced minimum size
         self.setStyleSheet("background-color: grey;")
         self.data = []
         
@@ -53,16 +53,16 @@ class DonutChart(QWidget):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         
         # Calculate available space for chart and legend
-        available_height = self.height() - 40 # Consider some top and bottom padding
-        min_legend_height = 60 # Estimate minimum height needed for legend (e.g., 2 lines * 30px height)
+        available_height = self.height() - 30  # Reduced padding
+        min_legend_height = 50  # Reduced minimum legend height
         
         # Calculate chart size based on minimum dimension, leaving space for legend
-        chart_size = min(self.width() - 40, available_height - min_legend_height, 250) # Also keep a max size limit
-        chart_size = max(chart_size, 100) # Ensure a minimum chart size
+        chart_size = min(self.width() - 30, available_height - min_legend_height, 200)  # Reduced max size
+        chart_size = max(chart_size, 80)  # Reduced minimum chart size
         
         # Calculate chart position to center it horizontally and place it above the legend area
-        chart_x = (self.width() - chart_size) // 2  # Center horizontally
-        chart_y = (available_height - min_legend_height - chart_size) // 2 + 20 # Center vertically above legend area with top padding
+        chart_x = (self.width() - chart_size) // 2
+        chart_y = (available_height - min_legend_height - chart_size) // 2 + 15  # Reduced top padding
         
         rect = QRectF(chart_x, chart_y, chart_size, chart_size)
 
@@ -109,17 +109,17 @@ class DonutChart(QWidget):
     def draw_legend(self, painter, legend_start_y):
         painter.setPen(QColor("#333333"))
         font = QFont()
-        font.setPointSize(10)
+        font.setPointSize(9)  # Reduced font size
         painter.setFont(font)
         
         # Start legend below the chart with some spacing
-        y_start = legend_start_y + 30
+        y_start = legend_start_y + 20  # Reduced spacing
         
         # Calculate how many items per row (3 columns)
         items_per_row = 3
         
         # Calculate the total width available for the legend items, considering padding
-        available_width = self.width() - 40  # 20 pixels padding on each side
+        available_width = self.width() - 30  # Reduced padding
         
         # Calculate the width of each column segment
         column_segment_width = available_width // items_per_row
@@ -129,31 +129,30 @@ class DonutChart(QWidget):
             col = i % items_per_row
             
             # Calculate x_pos for the start of the current column segment
-            segment_start_x = 20 + col * column_segment_width
+            segment_start_x = 15 + col * column_segment_width  # Reduced padding
             
             # Position the color square and text within this segment
-            # Add a small offset from the segment start for padding
             x_pos = segment_start_x + 5
             
-            y_pos = y_start + (row * 30)
+            y_pos = y_start + (row * 25)  # Reduced row height
             
             # Draw color square
             painter.setBrush(item["color"])
             painter.setPen(Qt.PenStyle.NoPen)
-            painter.drawEllipse(x_pos, y_pos, 15, 15)
+            painter.drawEllipse(x_pos, y_pos, 12, 12)  # Reduced square size
             
             # Draw label and amount
             painter.setPen(QColor("#333333"))
             
             # Calculate positions relative to the start of the column segment
-            label_x = segment_start_x + 25 # Offset from segment start
-            amount_x = segment_start_x + column_segment_width - 60 # Position amount near the end of the segment
+            label_x = segment_start_x + 20  # Reduced offset
+            amount_x = segment_start_x + column_segment_width - 50  # Reduced offset
             
             # Ensure amount_x is not too close to label_x
-            if amount_x < label_x + 80: # Assuming a max label width of around 80 pixels
-                amount_x = label_x + 80
+            if amount_x < label_x + 70:  # Reduced minimum spacing
+                amount_x = label_x + 70
 
-            painter.drawText(label_x, y_pos + 12, 
+            painter.drawText(label_x, y_pos + 10,  # Adjusted vertical alignment
                            f"{item['label']}")
-            painter.drawText(amount_x, y_pos + 12, 
+            painter.drawText(amount_x, y_pos + 10,  # Adjusted vertical alignment
                            f"{item['amount']}")

@@ -452,4 +452,34 @@ QSpinBox::down-arrow {
     height: 10px;
 }
 
+QScrollBar:vertical {
+    border: none;
+    background: #f1f1f1;
+    width: 10px;
+    margin: 0px 0 0px 0;
+    border-radius: 5px;
+}
 
+QScrollBar::handle:vertical {
+    background: #c1c1c1;
+    min-height: 20px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #a8a8a8;
+}
+
+QScrollBar::add-line:vertical {
+    border: none;
+    background: none;
+}
+
+QScrollBar::sub-line:vertical {
+    border: none;
+    background: none;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: none;
+}

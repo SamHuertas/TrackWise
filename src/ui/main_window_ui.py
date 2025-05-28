@@ -434,7 +434,6 @@ class Ui_MainWindow(object):
         self.TransactionList = QtWidgets.QScrollArea(parent=self.RecentTransactionFrame)
         self.TransactionList.setWidgetResizable(True)
         self.TransactionList.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.TransactionList.setMinimumHeight(390)
         self.TransactionList.setObjectName("TransactionList")
         self.TransactionContents = QtWidgets.QWidget()
         self.TransactionContents.setGeometry(QtCore.QRect(0, 0, 622, 398))

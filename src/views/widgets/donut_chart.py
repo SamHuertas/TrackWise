@@ -53,16 +53,24 @@ class DonutChart(QWidget):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         
         # Calculate available space for chart and legend
-        available_height = self.height() - 30  # Reduced padding
-        min_legend_height = 50  # Reduced minimum legend height
+        padding = 20
+        available_width = self.width() - 2 * padding
+        available_height = self.height() - 2 * padding
         
-        # Calculate chart size based on minimum dimension, leaving space for legend
-        chart_size = min(self.width() - 30, available_height - min_legend_height, 200)  # Reduced max size
-        chart_size = max(chart_size, 80)  # Reduced minimum chart size
+        # Define space for legend on the right
+        legend_width = 180 # Estimate needed width for legend
         
-        # Calculate chart position to center it horizontally and place it above the legend area
-        chart_x = (self.width() - chart_size) // 2
-        chart_y = (available_height - min_legend_height - chart_size) // 2 + 15  # Reduced top padding
+        # Calculate space for chart on the left
+        chart_area_width = available_width - legend_width
+        chart_area_height = available_height
+        
+        # Calculate chart size (square)
+        chart_size = min(chart_area_width, chart_area_height)
+        chart_size = max(chart_size, 100) # Ensure minimum size
+        
+        # Calculate chart position (centered in its area)
+        chart_x = padding + (chart_area_width - chart_size) // 2
+        chart_y = padding + (chart_area_height - chart_size) // 2
         
         rect = QRectF(chart_x, chart_y, chart_size, chart_size)
 
@@ -103,56 +111,47 @@ class DonutChart(QWidget):
         painter.drawEllipse(center, hole_radius, hole_radius)
         
         # Draw legend
-        legend_y = chart_y + chart_size
-        self.draw_legend(painter, legend_y)
+        legend_start_x = padding + chart_area_width + padding # Start legend after chart area + padding
+        self.draw_legend(painter, legend_start_x, padding, legend_width, available_height) # Pass legend area bounds
         
-    def draw_legend(self, painter, legend_start_y):
+    def draw_legend(self, painter, legend_start_x, legend_start_y, legend_width, legend_height):
         painter.setPen(QColor("#333333"))
         font = QFont()
-        font.setPointSize(9)  # Reduced font size
+        font.setPointSize(9)  # Adjusted font size
         painter.setFont(font)
         
-        # Start legend below the chart with some spacing
-        y_start = legend_start_y + 20  # Reduced spacing
+        item_spacing = 5 # Spacing between legend items
+        item_height = 20 # Estimated height of each legend item
         
-        # Calculate how many items per row (3 columns)
-        items_per_row = 3
-        
-        # Calculate the total width available for the legend items, considering padding
-        available_width = self.width() - 30  # Reduced padding
-        
-        # Calculate the width of each column segment
-        column_segment_width = available_width // items_per_row
+        # Calculate starting y position to center legend vertically in its area
+        total_legend_height = len(self.data) * (item_height + item_spacing)
+        y_pos = legend_start_y + (legend_height - total_legend_height) // 2
         
         for i, item in enumerate(self.data):
-            row = i // items_per_row
-            col = i % items_per_row
-            
-            # Calculate x_pos for the start of the current column segment
-            segment_start_x = 15 + col * column_segment_width  # Reduced padding
-            
-            # Position the color square and text within this segment
-            x_pos = segment_start_x + 5
-            
-            y_pos = y_start + (row * 25)  # Reduced row height
+            x_pos_square = legend_start_x + 5 # Small padding from left edge of legend area
+            x_pos_text = x_pos_square + 20 # Space for color square + padding
             
             # Draw color square
             painter.setBrush(item["color"])
             painter.setPen(Qt.PenStyle.NoPen)
-            painter.drawEllipse(x_pos, y_pos, 12, 12)  # Reduced square size
+            square_size = 12 # Size of the color square
+            painter.drawEllipse(x_pos_square, y_pos + (item_height - square_size) // 2, square_size, square_size)
             
             # Draw label and amount
             painter.setPen(QColor("#333333"))
             
-            # Calculate positions relative to the start of the column segment
-            label_x = segment_start_x + 20  # Reduced offset
-            amount_x = segment_start_x + column_segment_width - 50  # Reduced offset
+            label = item['label']
+            amount = item['amount']
             
-            # Ensure amount_x is not too close to label_x
-            if amount_x < label_x + 70:  # Reduced minimum spacing
-                amount_x = label_x + 70
-
-            painter.drawText(label_x, y_pos + 10,  # Adjusted vertical alignment
-                           f"{item['label']}")
-            painter.drawText(amount_x, y_pos + 10,  # Adjusted vertical alignment
-                           f"{item['amount']}")
+            # Calculate available width for text
+            available_text_width = legend_width - (x_pos_text - legend_start_x) - 5 # Leave some padding on the right
+            
+            # Simple layout: label on the left, amount aligned to the right within the available text width
+            label_rect = QRectF(x_pos_text, y_pos, available_text_width, item_height)
+            painter.drawText(label_rect, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, label)
+            
+            # Calculate amount position for right alignment
+            amount_rect = QRectF(x_pos_text, y_pos, available_text_width, item_height)
+            painter.drawText(amount_rect, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, amount)
+            
+            y_pos += item_height + item_spacing

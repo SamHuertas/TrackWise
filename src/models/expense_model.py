@@ -28,7 +28,7 @@ class ExpenseModel:
 
     def get_expenses_by_current_week(self):
         # Get all expenses for the current week
-        return self.db.fetchall("SELECT * FROM Expenses WHERE YEARWEEK(Date, 1) = YEARWEEK(CURDATE(), 1)")
+        return self.db.fetchall("SELECT * FROM Expenses WHERE YEARWEEK(Date, 0) = YEARWEEK(CURDATE(), 0)")
 
     def get_all_expenses(self, budget_id: int):
         # Get all expenses for a specific budget

@@ -61,7 +61,7 @@ class TransactionManagementController(QWidget):
         # Parse the date string from the database (format: YYYY-MM-DD)
         date_str = str(transaction['Date'])
         year, month, day = map(int, date_str.split('-'))
-        return (year, month, day)
+        return (-year, -month, -day)
 
     def filter_by_category(self, transactions):
         category = self.main_window.CategoriesSelect.currentText()

@@ -178,13 +178,23 @@ class DashboardController:
         if not budget_id:
             return
             
+        # Get current date
+        current_date = datetime.now()
+        current_month = current_date.month
+        current_year = current_date.year
+            
         # Get expenses based on period
         if period == "This Week":
             expenses = self.expense_model.get_expenses_by_budget_this_week(budget_id)
         elif period == "This Day":
             expenses = self.expense_model.get_expenses_by_budget_today(budget_id)
         else:  # This Month
-            expenses = self.expense_model.get_expenses_by_budget(budget_id)
+            # Get budget info to check if it's current month
+            budget = self.budget_model.get_budget_by_id(budget_id)
+            if budget and budget['Month'] == current_month and budget['Year'] == current_year:
+                expenses = self.expense_model.get_expenses_by_budget(budget_id)
+            else:
+                expenses = []  # Empty list if not current month
             
         # Calculate category totals
         category_totals = {}

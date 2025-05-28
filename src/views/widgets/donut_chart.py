@@ -65,8 +65,8 @@ class DonutChart(QWidget):
         chart_area_height = available_height
         
         # Calculate chart size (square)
-        chart_size = min(chart_area_width, chart_area_height)
-        chart_size = max(chart_size, 100) # Ensure minimum size
+        chart_size = min(chart_area_width, chart_area_height, 150) # Reduced maximum size
+        chart_size = max(chart_size, 80) # Ensure a reasonable minimum size
         
         # Calculate chart position (centered in its area)
         chart_x = padding + (chart_area_width - chart_size) // 2
